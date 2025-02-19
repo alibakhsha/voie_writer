@@ -15,11 +15,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/iran.png
   AssetGenImage get iran => const AssetGenImage('assets/icons/iran.png');
 
+  /// File path: assets/icons/mic.svg
+  String get mic => 'assets/icons/mic.svg';
+
   /// File path: assets/icons/wifi-off.svg
   String get wifiOff => 'assets/icons/wifi-off.svg';
 
   /// List of all assets
-  List<dynamic> get values => [iran, wifiOff];
+  List<dynamic> get values => [iran, mic, wifiOff];
 }
 
 class Assets {
