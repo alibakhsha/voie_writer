@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:voie_writer/constant/app_color.dart';
 
+import '../../logic/cubit/home_page/home_cubit.dart';
 
 class BottomNav extends StatelessWidget {
   const BottomNav({super.key});
@@ -10,6 +11,7 @@ class BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
+      shape: const CircularNotchedRectangle(),
       notchMargin: 4.h,
       color: AppColor.appBarColor,
       height: 62.h,
@@ -17,22 +19,25 @@ class BottomNav extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-              builder:
-                  (context, state) => Icon(
-                    state == 1 ? Icons.person_outlined : Icons.person,
-                    size: 30.w,
-                    color: AppColor.appBarTextColor,
-                  ),
+            icon: BlocBuilder<HomeCubit, int>(
+              builder: (context, state) => Icon(
+                state == 0 ? Icons.person : Icons.person_outline,
+                size: 30.w,
+                color: AppColor.appBarTextColor,
+              ),
             ),
+            onPressed: () => context.read<HomeCubit>().changePage(0),
           ),
+          const SizedBox(width: 40),
           IconButton(
-              builder:
-                  (context, state) => Icon(
-                    state == 1 ? Icons.home : Icons.home_outlined,
-                    size: 30.w,
-                    color: AppColor.appBarTextColor,
-                  ),
+            icon: BlocBuilder<HomeCubit, int>(
+              builder: (context, state) => Icon(
+                state == 1 ? Icons.home : Icons.home_outlined,
+                size: 30.w,
+                color: AppColor.appBarTextColor,
+              ),
             ),
+            onPressed: () => context.read<HomeCubit>().changePage(1),
           ),
         ],
       ),
