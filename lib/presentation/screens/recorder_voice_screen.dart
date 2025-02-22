@@ -72,7 +72,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:voie_writer/constant/app_color.dart';
+import 'package:voie_writer/constant/app_text_style.dart';
+import 'package:voie_writer/gen/assets.gen.dart';
 import 'package:voie_writer/logic/cubit/voice/voice_cubit.dart';
 import 'package:voie_writer/presentation/widgets/app_bar.dart';
 
@@ -86,33 +90,84 @@ class RecorderVoiceScreen extends StatelessWidget {
         builder: (context, state) {
           if (state == VoiceState.processing) {
             return _loadingScreen();
-          } else if (state == VoiceState.selected) {
-            return _fileSelectedScreen(context);
-          } else if (state == VoiceState.error) {
-            return _errorScreen();
           } else {
-            return _mainContent(context);
+            return _fileSelectedScreen(context);
           }
+          // else if (state == VoiceState.error) {
+          //   return _errorScreen();
+          // } else {
+          //   return _mainContent(context);
+          // }
         },
       ),
     );
   }
 
-  // صفحه نمایش در حال پردازش
   Widget _loadingScreen() {
     return Column(
       children: [
+        SizedBox(height: 26.h),
         Container(
-          
-        ),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          width: 356.w,
+          height: 70.h,
+          decoration: BoxDecoration(
+            color: AppColor.voiceContainerColor,
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Icon(Icons.autorenew, size: 50.w, color: Colors.blue),
-              SizedBox(height: 20.h),
-              Text("در حال پردازش فایل...", style: TextStyle(fontSize: 18.sp)),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "جلسه اول کامپایلر",
+                      style: AppTextStyle.voiceNameText,
+                    ),
+                    Text("1 : 16 : 24", style: AppTextStyle.voiceNameText),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SvgPicture.asset(
+                  Assets.icons.microphone,
+                  width: 24.w,
+                  height: 24.h,
+                  color: AppColor.appTextColor,
+                ),
+              ),
             ],
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      Lottie.asset(
+                        Assets.animation.renew,
+                        width: 99.w,
+                        height: 91.h,
+                      ),
+                      SizedBox(height: 20.h),
+                      Text(
+                        """در حال ساخت متن شما هستیم. 
+لطفا منتظر بمانید """,
+                        style: AppTextStyle.loadingText,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -141,31 +196,36 @@ class RecorderVoiceScreen extends StatelessWidget {
   }
 
   // صفحه نمایش خطا در صورت رد دسترسی‌ها
-  Widget _errorScreen() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error, size: 50.w, color: Colors.red),
-          SizedBox(height: 20.h),
-          Text("❌ دسترسی رد شد!", style: TextStyle(fontSize: 18.sp, color: Colors.red)),
-        ],
-      ),
-    );
-  }
+  // Widget _errorScreen() {
+  //   return Center(
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Icon(Icons.error, size: 50.w, color: Colors.red),
+  //         SizedBox(height: 20.h),
+  //         Text(
+  //           "❌ دسترسی رد شد!",
+  //           style: TextStyle(fontSize: 18.sp, color: Colors.red),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   // صفحه اصلی که دکمه انتخاب فایل صوتی را نشان می‌دهد
-  Widget _mainContent(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          context.read<VoiceCubit>().pickAudioFile(); // درخواست انتخاب فایل صوتی
-        },
-        child: Text(
-          "برای انتخاب فایل صوتی روی این دکمه کلیک کنید",
-          style: TextStyle(fontSize: 18.sp),
-        ),
-      ),
-    );
-  }
+  // Widget _mainContent(BuildContext context) {
+  //   return Center(
+  //     child: ElevatedButton(
+  //       onPressed: () {
+  //         context
+  //             .read<VoiceCubit>()
+  //             .pickAudioFile(); // درخواست انتخاب فایل صوتی
+  //       },
+  //       child: Text(
+  //         "برای انتخاب فایل صوتی روی این دکمه کلیک کنید",
+  //         style: TextStyle(fontSize: 18.sp),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

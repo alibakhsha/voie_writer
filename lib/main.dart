@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:voie_writer/logic/cubit/home_page/home_cubit.dart';
 import 'package:voie_writer/presentation/screens/home_screen.dart';
 
+import 'logic/cubit/voice/voice_cubit.dart';
+
 void main() {
   runApp(
     MaterialApp(
@@ -15,6 +17,9 @@ void main() {
               providers: [
                 BlocProvider<HomeCubit>(
                   create: (context) => HomeCubit(),
+                ),
+                BlocProvider<VoiceCubit>(
+                  create: (context) => VoiceCubit(),
                 ),
               ],
               child: HomeScreen(),

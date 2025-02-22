@@ -32,12 +32,12 @@ class BottomNav extends StatelessWidget {
           IconButton(
             icon: BlocBuilder<HomeCubit, int>(
               builder: (context, state) => Icon(
-                state == 1 ? Icons.home : Icons.home_outlined,
+                state == 2 ? Icons.home : Icons.home_outlined,
                 size: 30.w,
                 color: AppColor.appBarTextColor,
               ),
             ),
-            onPressed: () => context.read<HomeCubit>().changePage(1),
+            onPressed: () => context.read<HomeCubit>().changePage(2),
           ),
         ],
       ),

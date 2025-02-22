@@ -9,6 +9,16 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsAnimationGen {
+  const $AssetsAnimationGen();
+
+  /// File path: assets/animation/renew.json
+  String get renew => 'assets/animation/renew.json';
+
+  /// List of all assets
+  List<String> get values => [renew];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
@@ -18,16 +28,20 @@ class $AssetsIconsGen {
   /// File path: assets/icons/mic.svg
   String get mic => 'assets/icons/mic.svg';
 
+  /// File path: assets/icons/microphone.svg
+  String get microphone => 'assets/icons/microphone.svg';
+
   /// File path: assets/icons/wifi-off.svg
   String get wifiOff => 'assets/icons/wifi-off.svg';
 
   /// List of all assets
-  List<dynamic> get values => [iran, mic, wifiOff];
+  List<dynamic> get values => [iran, mic, microphone, wifiOff];
 }
 
 class Assets {
   const Assets._();
 
+  static const $AssetsAnimationGen animation = $AssetsAnimationGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
 }
 

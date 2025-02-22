@@ -15,4 +15,16 @@ class AppTextStyle{
     fontWeight: FontWeight.w400,
     color: AppColor.appBarTextColor,
   );
+  static TextStyle voiceNameText = TextStyle(
+    fontFamily: 'b_nazanin',
+    fontSize: 14.w,
+    fontWeight: FontWeight.w400,
+    color: AppColor.appTextColor,
+  );
+  static TextStyle loadingText = TextStyle(
+    fontFamily: 'b_nazanin',
+    fontSize: 20.w,
+    fontWeight: FontWeight.w400,
+    color: AppColor.loadingColor,
+  );
 }
