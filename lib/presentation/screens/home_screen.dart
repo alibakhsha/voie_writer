@@ -4,10 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:voie_writer/constant/app_color.dart';
 import 'package:voie_writer/gen/assets.gen.dart';
-import 'package:voie_writer/logic/cubit/voice/voice_cubit.dart';
 import 'package:voie_writer/presentation/screens/main_home_screen.dart';
 import 'package:voie_writer/presentation/screens/profile_screen.dart';
-import 'package:voie_writer/presentation/screens/recorder_voice_screen.dart';
 import 'package:voie_writer/presentation/widgets/app_bar.dart';
 import 'package:voie_writer/presentation/widgets/bottom_nav.dart';
 
@@ -18,8 +16,8 @@ class HomeScreen extends StatelessWidget {
 
   final List<Widget> pages = [
     ProfileScreen(),
-    RecorderVoiceScreen(),
     MainHomeScreen(),
+
   ];
 
   @override
@@ -33,22 +31,20 @@ class HomeScreen extends StatelessWidget {
           builder: (context, state) => pages[state],
         ),
         bottomNavigationBar: const BottomNav(),
-        floatingActionButton: _buildFloatingActionButton(context),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: _buildFloatingActionButton(),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
 
-  Widget _buildFloatingActionButton(BuildContext context) {
+  Widget _buildFloatingActionButton() {
     return SizedBox(
       width: 72.w,
       height: 72.h,
       child: FloatingActionButton(
         elevation: 0,
-        onPressed: () {
-          context.read<HomeCubit>().changePage(1);
-          context.read<VoiceCubit>().pickAudioFile();
-        },
+        onPressed: () {},
         backgroundColor: AppColor.appBarColor,
         shape: const CircleBorder(),
         child: Padding(
