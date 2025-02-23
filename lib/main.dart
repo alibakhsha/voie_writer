@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:voie_writer/logic/cubit/drop_down/drop_down_cubit.dart';
 import 'package:voie_writer/logic/cubit/home_page/home_cubit.dart';
 import 'package:voie_writer/presentation/screens/home_screen.dart';
 
@@ -15,11 +16,10 @@ void main() {
         builder:
             (context, child) => MultiBlocProvider(
               providers: [
-                BlocProvider<HomeCubit>(
-                  create: (context) => HomeCubit(),
-                ),
-                BlocProvider<VoiceCubit>(
-                  create: (context) => VoiceCubit(),
+                BlocProvider<HomeCubit>(create: (context) => HomeCubit()),
+                BlocProvider<VoiceCubit>(create: (context) => VoiceCubit()),
+                BlocProvider<DropDownCubit>(
+                  create: (context) => DropDownCubit(),
                 ),
               ],
               child: HomeScreen(),

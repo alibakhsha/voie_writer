@@ -78,7 +78,8 @@ import 'package:voie_writer/constant/app_color.dart';
 import 'package:voie_writer/constant/app_text_style.dart';
 import 'package:voie_writer/gen/assets.gen.dart';
 import 'package:voie_writer/logic/cubit/voice/voice_cubit.dart';
-import 'package:voie_writer/presentation/widgets/app_bar.dart';
+
+import '../../logic/cubit/drop_down/drop_down_cubit.dart';
 
 class RecorderVoiceScreen extends StatelessWidget {
   const RecorderVoiceScreen({super.key});
@@ -86,24 +87,91 @@ class RecorderVoiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<VoiceCubit, VoiceState>(
-        builder: (context, state) {
-          if (state == VoiceState.processing) {
-            return _loadingScreen();
-          } else {
-            return _fileSelectedScreen(context);
-          }
-          // else if (state == VoiceState.error) {
-          //   return _errorScreen();
-          // } else {
-          //   return _mainContent(context);
-          // }
-        },
+      backgroundColor: AppColor.appBackgroundColor,
+      body: Stack(
+        children: [
+          Expanded(
+            child: BlocBuilder<VoiceCubit, VoiceState>(
+              builder: (context, state) {
+                if (state == VoiceState.processing) {
+                  return _loadingScreen(context);
+                } else {
+                  return _fileSelectedScreen(context);
+                }
+              },
+            ),
+          ),
+          BlocBuilder<DropDownCubit, bool>(
+            builder: (context, isOpen) {
+              return isOpen
+                  ? Positioned(
+                    left: 12.w,
+                    right: 158.w,
+                    child: _languageDropdown(context),
+                  )
+                  : SizedBox.shrink();
+            },
+          ),
+        ],
       ),
     );
   }
 
-  Widget _loadingScreen() {
+  Widget _languageDropdown(BuildContext context) {
+    List<String> languages = [
+      "America",
+      "Italian",
+      "UK",
+      "Canada",
+      "German",
+      "Turkey",
+    ];
+
+    return Container(
+      width: 223.w,
+      height: 366.h,
+      padding: EdgeInsets.all(10.w),
+      decoration: BoxDecoration(
+        color: AppColor.appBackgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 1)],
+      ),
+      child: Column(
+        children: [
+          ...languages.map((lang) {
+            return Column(
+              children: [
+                ListTile(
+                  title: Row(
+                    children: [
+                      Container(
+                        width: 36.w,
+                        height: 36.h,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(Assets.icons.iran.path),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(lang, style: AppTextStyle.dropDownText),
+                    ],
+                  ),
+                  onTap: () {
+                    context.read<DropDownCubit>().toggleDropdown();
+                  },
+                ),
+                Divider(height: 0, color: Color.fromRGBO(244, 244, 244, 1)),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _loadingScreen(BuildContext context) {
+    final voiceCubit = context.read<VoiceCubit>();
     return Column(
       children: [
         SizedBox(height: 26.h),
@@ -124,10 +192,13 @@ class RecorderVoiceScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      "جلسه اول کامپایلر",
+                      voiceCubit.fileName!,
                       style: AppTextStyle.voiceNameText,
                     ),
-                    Text("1 : 16 : 24", style: AppTextStyle.voiceNameText),
+                    Text(
+                      voiceCubit.fileDuration.toString(),
+                      style: AppTextStyle.voiceNameText,
+                    ),
                   ],
                 ),
               ),
@@ -158,8 +229,8 @@ class RecorderVoiceScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 20.h),
                       Text(
-                        """در حال ساخت متن شما هستیم. 
-لطفا منتظر بمانید """,
+                        " در حال ساخت متن شما هستیم."
+                        "لطفا منتظر بمانید hdhdhdhdghdghddhddgdhgdhgdghdghrehyryhr",
                         style: AppTextStyle.loadingText,
                         textAlign: TextAlign.center,
                       ),

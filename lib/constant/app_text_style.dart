@@ -27,4 +27,10 @@ class AppTextStyle{
     fontWeight: FontWeight.w400,
     color: AppColor.loadingColor,
   );
+  static TextStyle dropDownText = TextStyle(
+    fontFamily: 'b_nazanin',
+    fontSize: 16.w,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+  );
 }

@@ -22,13 +22,15 @@ class HomeScreen extends StatelessWidget {
     MainHomeScreen(),
   ];
 
+  final List<String> pageTitles = ["voice_writer", "", "voice_writer"];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         extendBody: true,
         backgroundColor: AppColor.appBackgroundColor,
-        appBar: appBar("نام اپ"),
+        appBar: appBar(pageTitles[context.watch<HomeCubit>().state], context),
         body: BlocBuilder<HomeCubit, int>(
           builder: (context, state) => pages[state],
         ),
