@@ -12,17 +12,45 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/Group 3.svg
+  String get group3 => 'assets/icons/Group 3.svg';
+
+  /// File path: assets/icons/Icon.svg
+  String get icon => 'assets/icons/Icon.svg';
+
+  /// File path: assets/icons/Onboarding1.svg
+  String get onboarding1 => 'assets/icons/Onboarding1.svg';
+
+  /// File path: assets/icons/Onboarding2.svg
+  String get onboarding2 => 'assets/icons/Onboarding2.svg';
+
+  /// File path: assets/icons/Onboarding3.svg
+  String get onboarding3 => 'assets/icons/Onboarding3.svg';
+
   /// File path: assets/icons/iran.png
   AssetGenImage get iran => const AssetGenImage('assets/icons/iran.png');
 
   /// File path: assets/icons/mic.svg
   String get mic => 'assets/icons/mic.svg';
 
+  /// File path: assets/icons/searchIcon.svg
+  String get searchIcon => 'assets/icons/searchIcon.svg';
+
   /// File path: assets/icons/wifi-off.svg
   String get wifiOff => 'assets/icons/wifi-off.svg';
 
   /// List of all assets
-  List<dynamic> get values => [iran, mic, wifiOff];
+  List<dynamic> get values => [
+    group3,
+    icon,
+    onboarding1,
+    onboarding2,
+    onboarding3,
+    iran,
+    mic,
+    searchIcon,
+    wifiOff,
+  ];
 }
 
 class Assets {
