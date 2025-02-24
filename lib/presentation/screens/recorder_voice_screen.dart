@@ -77,8 +77,11 @@ import 'package:lottie/lottie.dart';
 import 'package:voie_writer/constant/app_color.dart';
 import 'package:voie_writer/constant/app_text_style.dart';
 import 'package:voie_writer/gen/assets.gen.dart';
+import 'package:voie_writer/logic/cubit/color_cubit/color_platte_cubit.dart';
 import 'package:voie_writer/logic/cubit/voice/voice_cubit.dart';
 
+import '../../logic/cubit/color_cubit/color_cubit.dart';
+import '../../logic/cubit/color_cubit/color_state.dart';
 import '../../logic/cubit/drop_down/drop_down_cubit.dart';
 
 class RecorderVoiceScreen extends StatelessWidget {
@@ -96,7 +99,7 @@ class RecorderVoiceScreen extends StatelessWidget {
                 if (state == VoiceState.processing) {
                   return _loadingScreen(context);
                 } else {
-                  return _fileSelectedScreen(context);
+                  return SingleChildScrollView(child: _fileSelectedScreen(context));
                 }
               },
             ),
@@ -228,11 +231,15 @@ class RecorderVoiceScreen extends StatelessWidget {
                         height: 91.h,
                       ),
                       SizedBox(height: 20.h),
-                      Text(
-                        " در حال ساخت متن شما هستیم."
-                        "لطفا منتظر بمانید hdhdhdhdghdghddhddgdhgdhgdghdghrehyryhr",
-                        style: AppTextStyle.loadingText,
-                        textAlign: TextAlign.center,
+                      SizedBox(
+                        width: 230.w,
+                        height: 60.h,
+                        child: Text(
+                          ".در حال ساخت متن شما هستیم\n"
+                          "لطفا منتظر بمانید",
+                          style: AppTextStyle.loadingText,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ],
                   ),
@@ -245,58 +252,153 @@ class RecorderVoiceScreen extends StatelessWidget {
     );
   }
 
-  // صفحه نمایش فایل انتخابی
   Widget _fileSelectedScreen(BuildContext context) {
     final voiceCubit = context.read<VoiceCubit>();
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.audiotrack, size: 50.w, color: Colors.green),
-          SizedBox(height: 20.h),
-          Text("فایل انتخاب شد:", style: TextStyle(fontSize: 18.sp)),
-          SizedBox(height: 10.h),
-          Text(
-            voiceCubit.selectedFilePath ?? "نامشخص",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16.sp, color: Colors.black),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "150 کلمه / 231 کاراکتر",
+                    style: AppTextStyle.voiceCharacterText,
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.read<ColorCubit>().togglePalette(),
+                    child: SvgPicture.asset(
+                      width: 24.w,
+                      height: 24.h,
+                      Assets.icons.palette,
+                      color: Color.fromRGBO(40, 40, 40, 1),
+                    ),
+                  ),
+                  SizedBox(width: 6.w),
+                  SvgPicture.asset(
+                    width: 24.w,
+                    height: 24.h,
+                    Assets.icons.share,
+                    color: Color.fromRGBO(40, 40, 40, 1),
+                  ),
+                  SizedBox(width: 6.w),
+                  SvgPicture.asset(
+                    width: 24.w,
+                    height: 24.h,
+                    Assets.icons.download02,
+                    color: Color.fromRGBO(40, 40, 40, 1),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        SizedBox(height: 20.h),
+        Padding(
+          padding: const EdgeInsets.only(right: 24),
+          child: BlocBuilder<ColorCubit, ColorState>(
+            builder: (context, state) {
+              return state.isPaletteOpen
+                  ? _buildColorPalette(context)
+                  : SizedBox.shrink();
+            },
+          ),
+        ),
+
+        SizedBox(height: 20.h),
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: BlocBuilder<ColorCubit, ColorState>(
+            builder: (context, state) {
+              return SelectableText.rich(
+                TextSpan(
+                  children: _buildTextSpans(
+                    context,
+                    state.selectedText,
+                    state.selectedColor,
+                  ),
+                ),
+                style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                onSelectionChanged: (selection, cause) {
+                  context.read<ColorCubit>().setSelection(selection);
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
-  // صفحه نمایش خطا در صورت رد دسترسی‌ها
-  // Widget _errorScreen() {
-  //   return Center(
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Icon(Icons.error, size: 50.w, color: Colors.red),
-  //         SizedBox(height: 20.h),
-  //         Text(
-  //           "❌ دسترسی رد شد!",
-  //           style: TextStyle(fontSize: 18.sp, color: Colors.red),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  List<TextSpan> _buildTextSpans(
+    BuildContext context,
+    TextSelection? selection,
+    Color? selectedColor,
+  ) {
+    String text = "متنی که قابلیت هایلایت شدن دارد.";
+    List<TextSpan> spans = [];
+    for (int i = 0; i < text.length; i++) {
+      spans.add(
+        TextSpan(
+          text: text[i],
+          style: TextStyle(
+            backgroundColor:
+                (selection != null && i >= selection.start && i < selection.end)
+                    ? selectedColor ?? Colors.transparent
+                    : Colors.transparent,
+          ),
+        ),
+      );
+    }
+    return spans;
+  }
 
-  // صفحه اصلی که دکمه انتخاب فایل صوتی را نشان می‌دهد
-  // Widget _mainContent(BuildContext context) {
-  //   return Center(
-  //     child: ElevatedButton(
-  //       onPressed: () {
-  //         context
-  //             .read<VoiceCubit>()
-  //             .pickAudioFile(); // درخواست انتخاب فایل صوتی
-  //       },
-  //       child: Text(
-  //         "برای انتخاب فایل صوتی روی این دکمه کلیک کنید",
-  //         style: TextStyle(fontSize: 18.sp),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget _buildColorPalette(BuildContext context) {
+    final colors = [
+      Colors.red,
+      Colors.green,
+      Colors.blue,
+      Colors.yellow,
+      Colors.purple,
+      Colors.orange,
+    ];
+    return Container(
+      width: 236.w,
+      height: 36,
+      padding: EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 2)],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children:
+            colors.map((color) {
+              return GestureDetector(
+                onTap: () {
+                  context.read<ColorCubit>().highlightSelection(color);
+                },
+                child: Container(
+                  width: 36.w,
+                  height: 36.h,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.black, width: 1),
+                  ),
+                ),
+              );
+            }).toList(),
+      ),
+    );
+  }
 }

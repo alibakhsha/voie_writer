@@ -66,15 +66,15 @@ PreferredSize appBar(String? title,BuildContext context) {
           padding: EdgeInsets.fromLTRB(12.w, 9.h, 12.w, 9.h),
           child:
               title.isNotEmpty
-                  ? Container(
-                    width: 36.w,
-                    height: 36.h,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(Assets.icons.iran.path),
-                      ),
-                    ),
-                  )
+              ? Container(
+                width: 36.w,
+                height: 36.h,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(Assets.icons.iran.path),
+                  ),
+                ),
+              )
                   : Text(
                     "تبدیل ویس به متن",
                     style: AppTextStyle.appBarTitleText,

@@ -33,4 +33,10 @@ class AppTextStyle{
     fontWeight: FontWeight.w400,
     color: Colors.black,
   );
+  static TextStyle voiceCharacterText = TextStyle(
+    fontFamily: 'b_nazanin',
+    fontSize: 12.w,
+    fontWeight: FontWeight.w400,
+    color: Color.fromRGBO(40, 40, 40, 1),
+  );
 }

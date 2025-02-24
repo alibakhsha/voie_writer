@@ -22,6 +22,9 @@ class $AssetsAnimationGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/download-02.svg
+  String get download02 => 'assets/icons/download-02.svg';
+
   /// File path: assets/icons/iran.png
   AssetGenImage get iran => const AssetGenImage('assets/icons/iran.png');
 
@@ -31,11 +34,25 @@ class $AssetsIconsGen {
   /// File path: assets/icons/microphone.svg
   String get microphone => 'assets/icons/microphone.svg';
 
+  /// File path: assets/icons/palette.svg
+  String get palette => 'assets/icons/palette.svg';
+
+  /// File path: assets/icons/share.svg
+  String get share => 'assets/icons/share.svg';
+
   /// File path: assets/icons/wifi-off.svg
   String get wifiOff => 'assets/icons/wifi-off.svg';
 
   /// List of all assets
-  List<dynamic> get values => [iran, mic, microphone, wifiOff];
+  List<dynamic> get values => [
+    download02,
+    iran,
+    mic,
+    microphone,
+    palette,
+    share,
+    wifiOff,
+  ];
 }
 
 class Assets {
