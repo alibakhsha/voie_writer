@@ -1,74 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:voie_writer/constant/app_color.dart';
-// import 'package:voie_writer/logic/cubit/voice/voice_cubit.dart';
-// import 'package:voie_writer/presentation/widgets/app_bar.dart';
-//
-// class RecorderVoiceScreen extends StatelessWidget {
-//   const RecorderVoiceScreen({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       // appBar: appBar(""),
-//       // backgroundColor: AppColor.appBackgroundColor,
-//       body: BlocBuilder<VoiceCubit, VoiceState>(
-//         builder: (context, state) {
-//           if (state == VoiceState.processing) {
-//             return _loadingScreen();
-//           } else if (state == VoiceState.selected) {
-//             return _fileSelectedScreen(context);
-//           } else {
-//             return _mainContent(context);
-//           }
-//         },
-//       ),
-//     );
-//   }
-//
-//   Widget _loadingScreen() {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Icon(Icons.autorenew, size: 50.w, color: Colors.blue),
-//           SizedBox(height: 20.h),
-//           Text("در حال پردازش فایل...", style: TextStyle(fontSize: 18.sp)),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _fileSelectedScreen(BuildContext context) {
-//     final voiceCubit = context.read<VoiceCubit>();
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Icon(Icons.audiotrack, size: 50.w, color: Colors.green),
-//           SizedBox(height: 20.h),
-//           Text("فایل انتخاب شد:", style: TextStyle(fontSize: 18.sp)),
-//           SizedBox(height: 10.h),
-//           Text(
-//             voiceCubit.selectedFilePath ?? "نامشخص",
-//             textAlign: TextAlign.center,
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget _mainContent(BuildContext context) {
-//     return Center(
-//       child: Text(
-//         "برای انتخاب فایل صوتی روی میکروفون کلیک کنید",
-//         style: TextStyle(fontSize: 18.sp),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -99,7 +28,9 @@ class RecorderVoiceScreen extends StatelessWidget {
                 if (state == VoiceState.processing) {
                   return _loadingScreen(context);
                 } else {
-                  return SingleChildScrollView(child: _fileSelectedScreen(context));
+                  return SingleChildScrollView(
+                    child: _fileSelectedScreen(context),
+                  );
                 }
               },
             ),
@@ -290,11 +221,65 @@ class RecorderVoiceScreen extends StatelessWidget {
                     color: Color.fromRGBO(40, 40, 40, 1),
                   ),
                   SizedBox(width: 6.w),
-                  SvgPicture.asset(
-                    width: 24.w,
-                    height: 24.h,
-                    Assets.icons.download02,
-                    color: Color.fromRGBO(40, 40, 40, 1),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: AppColor.appBarTextColor,
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  "ذخیره متن",
+                                  style: AppTextStyle.dropDownText,
+                                ),
+                                SvgPicture.asset(
+                                  Assets.icons.download02,
+                                  width: 24.w,
+                                  height: 24.h,
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              Text(":موضوع / دسته بندی متن "),
+                              SizedBox(height: 8.h,),
+                              TextField(
+                                textDirection: TextDirection.rtl,
+                                textAlign: TextAlign.right,
+                                decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide.none
+                                  )
+                                ),
+                              ),
+                              SizedBox(height: 8.h,),
+                              Container(
+                                width: 93.w,
+                                height: 34.h,
+                                decoration: BoxDecoration(
+                                  color: AppColor.loadingColor,
+                                  borderRadius: BorderRadius.all(Radius.circular(8))
+                                ),
+                                child: Center(
+                                  child: Text("ذخیره",style: AppTextStyle.voiceNameText2,),
+                                ),
+                              ),
+                            ],   );
+                        },
+
+                      );
+                    },
+                    child: SvgPicture.asset(
+                      width: 24.w,
+                      height: 24.h,
+                      Assets.icons.download02,
+                      color: Color.fromRGBO(40, 40, 40, 1),
+                    ),
                   ),
                 ],
               ),
