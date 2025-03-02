@@ -6,7 +6,6 @@ import 'package:lottie/lottie.dart';
 import 'package:voie_writer/constant/app_color.dart';
 import 'package:voie_writer/constant/app_text_style.dart';
 import 'package:voie_writer/gen/assets.gen.dart';
-import 'package:voie_writer/logic/cubit/color_cubit/color_platte_cubit.dart';
 import 'package:voie_writer/logic/cubit/voice/voice_cubit.dart';
 
 import '../../logic/cubit/color_cubit/color_cubit.dart';
