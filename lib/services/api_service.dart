@@ -67,11 +67,26 @@ class ApiService {
       return null;
     }
   }
+  // Future<List<GetListVoice>?> Delete() async {
+  //   final url = Uri.parse('$_baseUrl/voice-to-text/100/');
+  //   final headers = await _getHeadersWithToken();
+  //   print("Headers being sent: $headers");
+  //
+  //   try {
+  //     final response = await http.delete(url, headers: headers);
+  //     print("del - API status code: ${response.statusCode}");
+  //     print("del - API response body: ${response.body}");
+  //
+  //   } catch (e) {
+  //     print('مشکل ارتباط در گرفتن داده‌ها: $e');
+  //     return null;
+  //   }
+  // }
 
   Future<List<GetListVoice>?> getVoiceToText() async {
     final url = Uri.parse('$_baseUrl/voice-to-text/');
     final headers = await _getHeadersWithToken();
-    print("Headers being sent: $headers"); // برای دیباگ
+    print("Headers being sent: $headers");
 
     try {
       final response = await http.get(url, headers: headers);

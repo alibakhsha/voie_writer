@@ -14,6 +14,7 @@ import '../../logic/event/voiceTextsList/textList_event.dart';
 import '../../logic/state/search/search_state.dart';
 import '../../logic/state/textList_state.dart';
 import '../../logic/state/voiceTextsList/textList_state.dart';
+import '../widgets/Search.dart';
 import '../widgets/emty_voice_widget.dart';
 import 'dart:io' show Platform;
 
@@ -27,34 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // _initializeDevice();
     context.read<VoiceTextCubit>().fetchVoiceTexts();
   }
 
-  // Future<void> _initializeDevice() async {
-  //   try {
-  //     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-  //     String? deviceId;
-  //
-  //     if (Platform.isAndroid) {
-  //       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-  //       deviceId = androidInfo.id;
-  //       print("Android Device ID: $deviceId");
-  //     } else if (Platform.isIOS) {
-  //       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-  //       deviceId = iosInfo.identifierForVendor;
-  //       print("iOS Device ID: $deviceId");
-  //     }
-  //
-  //     if (deviceId != null) {
-  //       await context.read<VoiceTextCubit>().initialize(deviceId);
-  //     } else {
-  //       print("Unable to get device ID");
-  //     }
-  //   } catch (e) {
-  //     print("Error getting device ID: $e");
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -66,11 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
-
-    //
-    // if (context.read<VoiceTextCubit>().state is VoiceTextInitial) {
-    //   context.read<VoiceTextCubit>().fetchVoiceTexts();
-    // }
 
     return SafeArea(
       child: Scaffold(
@@ -100,46 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     return Column(
                       children: [
-                        Padding(
-                          padding: EdgeInsets.all(25.w),
-                          child: TextField(
-                            controller: searchController,
-                            onChanged: (query) {
-                              context.read<SearchBloc>().add(SearchEvent(query));
-                            },
-                            decoration: InputDecoration(
-                              hintText: "جستجو بر اساس موضوع",
-                              hintStyle: TextStyle(
-                                color: AppColor.appBarColor,
-                                fontSize: 12.w,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: AppColor.appBarColor,
-                                  width: 1.w,
-                                ),
-                              ),
-                              contentPadding:
-                              EdgeInsets.symmetric(horizontal: 10),
-                              suffixIcon: Padding(
-                                padding: EdgeInsets.all(11.w),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    context
-                                        .read<SearchBloc>()
-                                        .add(SearchEvent(searchController.text));
-                                    print(
-                                        "جستجو با آیکون انجام شد: ${searchController.text}");
-                                  },
-                                  child: SvgPicture.asset(Assets.icons.searchIcon),
-                                ),
-                              ),
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
+                       Search(),
                         filteredVoices.isEmpty && searchState.query.isNotEmpty
                             ? Padding(
                           padding: EdgeInsets.symmetric(vertical: 50.w),

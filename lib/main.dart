@@ -1,18 +1,21 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:voie_writer/logic/cubit/bottom_nav/bottom_nav_cubit.dart';
-import 'package:voie_writer/presentation/screens/home_screen.dart';
 import 'package:voie_writer/presentation/screens/onboarding_screen.dart';
 import 'package:voie_writer/utils/device_utils.dart';
 import 'logic/cubit/OnboardingPage_bloc/Onboarding_cubit.dart';
 import 'gen/fonts.gen.dart';
 import 'logic/cubit/voiceTexts/voiceText_cubit.dart';
 import 'logic/cubit/search/search_cubit.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'logic/models/VoiceToText/get_list_voice.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(GetListVoiceAdapter());
+  await Hive.openBox<GetListVoice>('voice_texts');
   String? deviceId = await DeviceUtils.getDeviceId();
   runApp(MyApp(deviceId: deviceId));
 }

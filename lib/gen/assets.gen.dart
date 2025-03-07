@@ -41,16 +41,16 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<dynamic> get values => [
-    group3,
-    icon,
-    onboarding1,
-    onboarding2,
-    onboarding3,
-    iran,
-    mic,
-    searchIcon,
-    wifiOff,
-  ];
+        group3,
+        icon,
+        onboarding1,
+        onboarding2,
+        onboarding3,
+        iran,
+        mic,
+        searchIcon,
+        wifiOff
+      ];
 }
 
 class Assets {
@@ -60,7 +60,11 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  });
 
   final String _assetName;
 
@@ -120,8 +124,15 @@ class AssetGenImage {
     );
   }
 
-  ImageProvider provider({AssetBundle? bundle, String? package}) {
-    return AssetImage(_assetName, bundle: bundle, package: package);
+  ImageProvider provider({
+    AssetBundle? bundle,
+    String? package,
+  }) {
+    return AssetImage(
+      _assetName,
+      bundle: bundle,
+      package: package,
+    );
   }
 
   String get path => _assetName;

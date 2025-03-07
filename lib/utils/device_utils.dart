@@ -2,19 +2,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 
 
-// class DeviceUtils {
-//
-//   static Future<String?> getDeviceId() async {
-//     try {
-//       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-//       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-//       return androidInfo.id;
-//     } catch (e) {
-//       print("خطا در گرفتن شناسه دستگاه: $e");
-//       return null;
-//     }
-//   }
-// }
 class DeviceUtils {
   static Future<String?> getDeviceId() async {
     try {

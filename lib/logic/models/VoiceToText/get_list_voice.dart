@@ -1,8 +1,22 @@
-class GetListVoice {
+import 'package:hive/hive.dart';
+
+part 'get_list_voice.g.dart'; // این خط باید باشه
+
+@HiveType(typeId: 0)
+class GetListVoice extends HiveObject {
+  @HiveField(0)
   final int id;
+
+  @HiveField(1)
   final int user;
+
+  @HiveField(2)
   final String audio;
+
+  @HiveField(3)
   final String transcript;
+
+  @HiveField(4)
   final String createdAt;
 
   GetListVoice({

@@ -16,7 +16,6 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   OnboardingCubit(this.pageController, {String? deviceId})
       : _onboardingLogic = OnboardingLogic(pageController, deviceId: deviceId),
         super(OnboardingState()) {
-    print("OnboardingCubit initialized with deviceId: $deviceId");
     _startAutoSlide();
     _registerDevice();
   }

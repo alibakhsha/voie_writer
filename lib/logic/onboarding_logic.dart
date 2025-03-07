@@ -19,11 +19,11 @@ class OnboardingLogic {
 
     if (deviceId != null) {
       final userResult = await _deviceRegistration.createUser(deviceId!);
-      if (userResult != null) {
-        print("کاربر با موفقیت ثبت شد: $userResult");
-      } else {
-        print("ثبت کاربر ناموفق بود,صبر کنید...");
-      }
+      // if (userResult != null) {
+      //   print("کاربر با موفقیت ثبت شد: $userResult");
+      // } else {
+      //   print("ثبت کاربر ناموفق بود,صبر کنید...");
+      // }
 
       final tokenResult = await _deviceRegistration.authenticateDevice(deviceId!);
 

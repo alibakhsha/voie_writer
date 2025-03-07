@@ -1,4 +1,4 @@
-// lib/presentation/screens/onboarding_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,7 +8,7 @@ import '../../logic/state/onboarding/Onboarding_state.dart';
 import 'home_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
-  final String? deviceId; // پارامتر deviceId رو اضافه کردم
+  final String? deviceId;
 
   OnboardingScreen({this.deviceId}) {
     print("OnboardingScreen initialized with deviceId: $deviceId");
