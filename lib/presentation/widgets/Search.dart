@@ -7,18 +7,30 @@ import '../../gen/assets.gen.dart';
 import '../../logic/cubit/search/search_cubit.dart';
 import '../../logic/event/search/search_event.dart';
 
+class Search extends StatefulWidget {
+  const Search({super.key});
 
-class Search extends StatelessWidget {
-  final TextEditingController searchController = TextEditingController();
+  @override
+  _SearchState createState() => _SearchState();
+}
+
+class _SearchState extends State<Search> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose(); // جلوگیری از نشت حافظه
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: EdgeInsets.all(25.w),
       child: TextField(
-        controller: searchController,
+        controller: _searchController,
         onChanged: (query) {
-          context.read<SearchBloc>().add(SearchEvent(query));
+          context.read<SearchBloc>().add(SearchEvent(query)); // ارسال رویداد با هر تغییر
         },
         decoration: InputDecoration(
           hintText: "جستجو بر اساس موضوع",
@@ -34,21 +46,26 @@ class Search extends StatelessWidget {
               width: 1.w,
             ),
           ),
-          contentPadding:
-          EdgeInsets.symmetric(horizontal: 10),
+          contentPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
           suffixIcon: Padding(
             padding: EdgeInsets.all(11.w),
             child: GestureDetector(
               onTap: () {
-                context
-                    .read<SearchBloc>()
-                    .add(SearchEvent(searchController.text));
-                print(
-                    "جستجو با آیکون انجام شد: ${searchController.text}");
+                context.read<SearchBloc>().add(SearchEvent(_searchController.text));
+                print("جستجو با آیکون انجام شد: ${_searchController.text}");
               },
               child: SvgPicture.asset(Assets.icons.searchIcon),
             ),
           ),
+          prefixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+            icon: Icon(Icons.clear, size: 20.w, color: AppColor.appBarColor),
+            onPressed: () {
+              _searchController.clear();
+              context.read<SearchBloc>().add(SearchEvent('')); // پاک کردن جستجو
+            },
+          )
+              : null,
         ),
         textAlign: TextAlign.right,
       ),

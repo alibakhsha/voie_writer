@@ -4,11 +4,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voie_writer/logic/cubit/voiceTexts/voiceText_cubit.dart' as _apiService;
 import '../../../services/api_service.dart';
 import '../../device_registration.dart';
 import '../../event/voiceTextsList/textList_event.dart';
 import '../../models/VoiceToText/get_list_voice.dart';
 import '../../models/user_model/JwtToken.dart';
+import '../../state/delet_voice_state.dart';
 import '../../state/textList_state.dart';
 import '../../state/voiceTextsList/textList_state.dart';
 
@@ -103,49 +105,30 @@ class VoiceTextCubit extends Cubit<VoiceTextState> {
       }
     }
   }
-}
 
 
 
 
+Future<void> deleteVoiceText(String id) async {
+  emit(VoiceTextLoading()); // استفاده از VoiceTextLoading برای هماهنگی
 
-  // Future<void> fetchVoiceTexts() async {
-  //   emit(VoiceTextLoading());
-  //   final box = await Hive.openBox<GetListVoice>('voice_texts');
-  //   try {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final accessToken = prefs.getString('access_token');
-  //     print("توکن قبل از درخواست: $accessToken");
-  //     if (accessToken == null) {
-  //       emit(VoiceTextError('لطفاً ابتدا دستگاه را احراز هویت کنید'));
-  //       return;
-  //     }
-  //     // final ices = await _apiService.Delete();
-  //     final voices = await _apiService.getVoiceToText();
-  //
-  //     emit(VoiceTextLoaded(voices ?? []));
-  //   } catch (e) {
-  //     emit(VoiceTextError('خطا در گرفتن داده‌ها: $e'));
-  //   }
-  // }
+  try {
+    final success = await _apiService.deleteVoice(id); // فراخوانی تابع اصلاح‌شده
 
-  // Future <void> deleteVoiceText(int index)async{
-  //
-  //
-  //
-  //   if (index < 0 || index >= state.length) {
-  //
-  //     return;
-  //   }
-  //
-  //   List<Map<String, String>> updatedList = List.from(state);
-  //
-  //   updatedList.removeAt(index);
-  //
-  //   emit(updatedList);
-  //
-  // }
-// }
+    if (success) {
+      final box = await Hive.openBox<GetListVoice>('voice_texts');
+      final updatedList = box.values.where((voice) => voice.id != id).toList();
+      await box.clear();
+      await box.addAll(updatedList);
+      emit(VoiceTextLoaded(updatedList)); // برگردوندن به VoiceTextLoaded
+      print("حذف موفقیت‌آمیز بود - لیست جدید: $updatedList");
+    } else {
+      emit(VoiceTextError("حذف ناموفق بود: سرور پاسخ معتبر نداد"));
+    }
+  } catch (e) {
+    emit(VoiceTextError("خطا در حذف: $e"));
+  }
+}}
 
 class MoveBloc extends Bloc<MoveEvent, MoveState> {
   MoveBloc()
