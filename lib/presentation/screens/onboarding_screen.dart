@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import '../../logic/cubit/OnboardingPage_bloc/Onboarding_cubit.dart';
 import '../../logic/state/onboarding/Onboarding_state.dart';
 import 'home_screen.dart';
@@ -33,13 +34,9 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<OnboardingCubit, OnboardingState>(
       listener: (context, state) {
-        print("BlocListener state: Page ${state.pageIndex}");
         if (state.pageIndex == 3) {
           context.read<OnboardingCubit>().stopAutoSlide();
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
+         context.replace('/home');
         }
       },
       child: Scaffold(

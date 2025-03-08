@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:voie_writer/logic/cubit/bottom_nav/bottom_nav_cubit.dart';
+import 'package:voie_writer/presentation/screens/home_screen.dart';
 import 'package:voie_writer/presentation/screens/onboarding_screen.dart';
 import 'package:voie_writer/utils/device_utils.dart';
 import 'logic/cubit/OnboardingPage_bloc/Onboarding_cubit.dart';
@@ -10,6 +11,17 @@ import 'logic/cubit/voiceTexts/voiceText_cubit.dart';
 import 'logic/cubit/search/search_cubit.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'logic/models/VoiceToText/get_list_voice.dart';
+import 'package:go_router/go_router.dart';
+
+final GoRouter router =GoRouter(
+  routes: [
+    GoRoute(path: "/",builder: (context,state){
+      final String? deviceId = state.extra as String?;
+      return OnboardingScreen(deviceId: deviceId);
+    }),
+    GoRoute(path: "/home",builder: (context,state)=>HomeScreen())
+  ]
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,9 +34,8 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final String? deviceId;
-  MyApp({this.deviceId}) {
-    print("MyApp initialized with deviceId: $deviceId");
-  }
+  MyApp({this.deviceId}) ;
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -36,7 +47,6 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<OnboardingCubit>(
             create: (context) {
-              print("Creating OnboardingCubit with deviceId: $deviceId");
               return OnboardingCubit(PageController(),deviceId: deviceId);
             },
           ),
@@ -50,10 +60,10 @@ class MyApp extends StatelessWidget {
             create: (context) => MoveBloc(),
           ),
         ],
-        child: MaterialApp(
+        child: MaterialApp.router(
+          routerConfig: router,
           debugShowCheckedModeBanner: false,
           theme: ThemeData(fontFamily: FontFamily.bNazanin),
-          home: OnboardingScreen(deviceId: deviceId),
         ),
       ),
     );
