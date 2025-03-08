@@ -33,7 +33,7 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<OnboardingCubit, OnboardingState>(
       listener: (context, state) {
-        print("BlocListener state: Page ${state.pageIndex}, Message: ${state.registrationMessage}");
+        print("BlocListener state: Page ${state.pageIndex}");
         if (state.pageIndex == 3) {
           context.read<OnboardingCubit>().stopAutoSlide();
           Navigator.pushReplacement(
@@ -87,20 +87,7 @@ class OnboardingScreen extends StatelessWidget {
                 },
               ),
             ),
-            Positioned(
-              bottom: 80,
-              left: 0,
-              right: 0,
-              child: BlocBuilder<OnboardingCubit, OnboardingState>(
-                builder: (context, state) {
-                  return Text(
-                    state.registrationMessage,
-                    style: TextStyle(fontSize: 16.sp, color: Colors.black),
-                    textAlign: TextAlign.center,
-                  );
-                },
-              ),
-            ),
+
           ],
         ),
       ),

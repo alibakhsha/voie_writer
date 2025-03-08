@@ -15,10 +15,10 @@ class OnboardingLogic {
     print("OnboardingLogic initialized with deviceId: $deviceId");
   }
 
-  Future<String> registerDevice() async {
+  Future<void> registerDevice() async {
 
     if (deviceId != null) {
-      final userResult = await _deviceRegistration.createUser(deviceId!);
+      // final userResult = await _deviceRegistration.createUser(deviceId!);
       // if (userResult != null) {
       //   print("کاربر با موفقیت ثبت شد: $userResult");
       // } else {
@@ -33,11 +33,11 @@ class OnboardingLogic {
         await prefs.setString('access_token', tokenResult.access);
         await prefs.setString('refresh_token', tokenResult.refresh);
 
-        return 'احراز هویت با موفقیت انجام شد!';
+        // return 'احراز هویت با موفقیت انجام شد!';
       } else {
-        return 'خطا در احراز هویت! (ممکنه imei ثبت نشده باشه)';
+        // return 'خطا در احراز هویت! (ممکنه imei ثبت نشده باشه)';
       }
     }
-    return 'نمی‌تونم شناسه دستگاه رو بگیرم!';
+    // return 'نمی‌تونم شناسه دستگاه رو بگیرم!';
   }
 }

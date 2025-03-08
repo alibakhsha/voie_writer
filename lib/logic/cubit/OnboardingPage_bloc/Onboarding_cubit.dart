@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../onboarding_logic.dart';
 import '../../state/onboarding/Onboarding_state.dart';
 
@@ -28,12 +27,12 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         timer.cancel();
         emit(OnboardingState(
           pageIndex: 3,
-          registrationMessage: state.registrationMessage,
+
         ));
       } else {
         emit(OnboardingState(
           pageIndex: nextPage,
-          registrationMessage: state.registrationMessage,
+
         ));
         if (pageController.hasClients) {
           pageController.animateToPage(
@@ -53,12 +52,11 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   Future<void> _registerDevice() async {
     emit(OnboardingState(
       pageIndex: state.pageIndex,
-      registrationMessage: 'در حال ارسال به سرور...',
     ));
-    final String result = await _onboardingLogic.registerDevice();
+    // final String result = await _onboardingLogic.registerDevice();
     emit(OnboardingState(
       pageIndex: state.pageIndex,
-      registrationMessage: result,
+      // registrationMessage: result,
     ));
   }
 
