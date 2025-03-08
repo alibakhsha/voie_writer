@@ -10,9 +10,9 @@ import '../../device_registration.dart';
 import '../../event/voiceTextsList/textList_event.dart';
 import '../../models/VoiceToText/get_list_voice.dart';
 import '../../models/user_model/JwtToken.dart';
-import '../../state/delet_voice_state.dart';
-import '../../state/textList_state.dart';
+import '../../state/voiceTextsList/delet_voice_state.dart';
 import '../../state/voiceTextsList/textList_state.dart';
+import '../../state/voiceTextsList/Move_Text.dart';
 
 
 class VoiceTextCubit extends Cubit<VoiceTextState> {

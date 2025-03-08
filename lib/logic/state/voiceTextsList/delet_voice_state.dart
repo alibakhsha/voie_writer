@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../models/VoiceToText/get_list_voice.dart';
+import '../../models/VoiceToText/get_list_voice.dart';
 
 abstract class DeleteVoiceState extends Equatable {
   @override
