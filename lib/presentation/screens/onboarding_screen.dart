@@ -99,18 +99,14 @@ class OnboardingScreen extends StatelessWidget {
           Center(
             child: SvgPicture.asset(
               image,
-              width: currentPage == 1 ? 408.w : 500.w,
-              height: currentPage == 1 ? 408.w : 500.w,
+              width:  500.w,
+              height: 500.w,
             ),
           ),
           Positioned(
-            top: currentPage == 1
-                ? 600.w
-                : currentPage == 0
-                ? 620.w
-                : 620.w,
-            right: currentPage == 0 ? 1 : 2,
-            left: currentPage == 0 ? 1 : 2,
+            top: 620.w,
+            right:  2,
+            left:  2,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Text(
