@@ -1,4 +1,3 @@
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,16 +8,12 @@ import 'package:voie_writer/presentation/widgets/app_bar.dart';
 import 'package:voie_writer/presentation/widgets/bottom_nav.dart';
 import '../../logic/cubit/search/search_cubit.dart';
 import '../../logic/cubit/voiceTexts/voiceText_cubit.dart';
-import '../../logic/event/search/search_event.dart';
-import '../../logic/event/voiceTextsList/textList_event.dart';
 import '../../logic/models/VoiceToText/get_list_voice.dart';
 import '../../logic/state/search/search_state.dart';
 import '../../logic/state/voiceTextsList/textList_state.dart';
-import '../../logic/state/voiceTextsList/Move_Text.dart';
 import '../widgets/ListViewForText.dart';
 import '../widgets/Search.dart';
 import '../widgets/emty_voice_widget.dart';
-import 'dart:io' show Platform;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -63,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (voices.isEmpty) {
                   return  EmptyVoiceWidget();
                 }
-                return BlocBuilder<SearchBloc, SearchState>(
+                return BlocBuilder<SearchCubit, SearchState>(
                   builder: (context, searchState) {
                     final voiceTextState = context.watch<VoiceTextCubit>().state;
                     List<GetListVoice> voices = [];

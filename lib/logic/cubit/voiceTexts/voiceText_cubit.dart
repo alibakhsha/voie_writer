@@ -1,16 +1,11 @@
 import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voie_writer/logic/cubit/voiceTexts/voiceText_cubit.dart' as _apiService;
 import '../../../services/api_service.dart';
 import '../../device_registration.dart';
-import '../../event/voiceTextsList/textList_event.dart';
 import '../../models/VoiceToText/get_list_voice.dart';
-import '../../models/user_model/JwtToken.dart';
-import '../../state/voiceTextsList/delet_voice_state.dart';
 import '../../state/voiceTextsList/textList_state.dart';
 import '../../state/voiceTextsList/Move_Text.dart';
 
@@ -130,34 +125,41 @@ Future<void> deleteVoiceText(String id) async {
   }
 }}
 
-class MoveBloc extends Bloc<MoveEvent, MoveState> {
-  MoveBloc()
-    : super(MoveState(selectedIndex: -1, positions: {}, leftPosition: 0.0)) {
-    on<MoveEvent>((event, emit) {
-      Map<int, double> newPositions = Map.from(state.positions);
-      if (state.selectedIndex == event.index) {
-        emit(
-          MoveState(
-            selectedIndex: -1,
-            positions: state.positions,
-            leftPosition: 0.0,
-          ),
-        );
-      } else {
-        newPositions[event.index] =
-            (newPositions[event.index] ?? 0.0) == 0.0 ? -42.0 : 0.0;
-        emit(
-          MoveState(
-            selectedIndex: event.index,
-            positions: newPositions,
-            leftPosition: newPositions[event.index] ?? 0.0,
-          ),
-        );
-      }
-    });
+class MoveCubit extends Cubit<MoveState> {
+  MoveCubit()
+      : super(MoveState(selectedIndex: -1, positions: {}, leftPosition: 0.0));
 
-    on<ResetMoveEvent>((event, emit) {
-      emit(MoveState(selectedIndex: -1, positions: {}, leftPosition: 0.0));
-    });
+  void move(int index) {
+    Map<int, double> newPositions = Map.from(state.positions);
+
+
+    if (state.selectedIndex == index) {
+      newPositions[index] = 0.0;
+      emit(
+        MoveState(
+          selectedIndex: -1,
+          positions: newPositions,
+          leftPosition: 0.0,
+        ),
+      );
+    } else {
+
+      newPositions.forEach((key, value) {
+        newPositions[key] = 0.0;
+      });
+
+      newPositions[index] = -42.0;
+      emit(
+        MoveState(
+          selectedIndex: index,
+          positions: newPositions,
+          leftPosition: -42.0,
+        ),
+      );
+    }
+  }
+
+  void reset() {
+    emit(MoveState(selectedIndex: -1, positions: {}, leftPosition: 0.0));
   }
 }

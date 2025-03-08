@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../constant/app_color.dart';
 import '../../gen/assets.gen.dart';
 import '../../logic/cubit/voiceTexts/voiceText_cubit.dart';
-import '../../logic/event/voiceTextsList/textList_event.dart';
 import '../../logic/state/voiceTextsList/Move_Text.dart';
 
 class Listviewfortext extends StatelessWidget {
@@ -22,7 +20,7 @@ class Listviewfortext extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MoveBloc, MoveState>(
+    return BlocBuilder<MoveCubit, MoveState>(
       builder: (context, moveState) {
         return Container(
           width: 390.w,
@@ -45,7 +43,7 @@ class Listviewfortext extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             context.read<VoiceTextCubit>().deleteVoiceText(item.id.toString());
-                            context.read<MoveBloc>().add(ResetMoveEvent());
+                            context.read<MoveCubit>().reset();
                           },
                           child: Container(
                             height: 61.w,
@@ -79,8 +77,7 @@ class Listviewfortext extends StatelessWidget {
                             0.0,
                         child: GestureDetector(
                           onTap: () {
-                            context.read<MoveBloc>().add(
-                                MoveEvent(originalIndex));
+                            context.read<MoveCubit>().move(originalIndex);
                           },
                           child: Container(
                             width: 330.w,
@@ -92,8 +89,8 @@ class Listviewfortext extends StatelessWidget {
                               BorderRadius.circular(
                                 !(moveState.selectedIndex ==
                                     originalIndex)
-                                    ? 8
-                                    : 0.w,
+                                    ? 8.w
+                                    : 0,
                               ),
                             ),
                             child: Column(

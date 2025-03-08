@@ -5,7 +5,7 @@ import 'package:voie_writer/logic/cubit/bottom_nav/bottom_nav_cubit.dart';
 import 'package:voie_writer/presentation/screens/home_screen.dart';
 import 'package:voie_writer/presentation/screens/onboarding_screen.dart';
 import 'package:voie_writer/utils/device_utils.dart';
-import 'logic/cubit/OnboardingPage_bloc/Onboarding_cubit.dart';
+import 'logic/cubit/OnboardingPage/Onboarding_cubit.dart';
 import 'gen/fonts.gen.dart';
 import 'logic/cubit/voiceTexts/voiceText_cubit.dart';
 import 'logic/cubit/search/search_cubit.dart';
@@ -53,11 +53,11 @@ class MyApp extends StatelessWidget {
           BlocProvider<VoiceTextCubit>(
             create: (context) => VoiceTextCubit()..fetchVoiceTexts(),
           ),
-          BlocProvider<SearchBloc>(
-            create: (context) => SearchBloc(),
+          BlocProvider<SearchCubit>(
+            create: (context) => SearchCubit(),
           ),
-          BlocProvider<MoveBloc>(
-            create: (context) => MoveBloc(),
+          BlocProvider<MoveCubit>(
+            create: (context) => MoveCubit(),
           ),
         ],
         child: MaterialApp.router(

@@ -1,13 +1,12 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voie_writer/constant/app_color.dart';
-import '../../logic/cubit/OnboardingPage_bloc/Onboarding_cubit.dart';
+import '../../logic/cubit/OnboardingPage/Onboarding_cubit.dart';
 import '../../logic/state/onboarding/Onboarding_state.dart';
-import 'home_screen.dart';
+
 
 class OnboardingScreen extends StatelessWidget {
   final String? deviceId;

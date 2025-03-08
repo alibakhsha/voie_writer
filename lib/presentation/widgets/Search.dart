@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import '../../constant/app_color.dart';
 import '../../gen/assets.gen.dart';
 import '../../logic/cubit/search/search_cubit.dart';
-import '../../logic/event/search/search_event.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -30,7 +29,7 @@ class _SearchState extends State<Search> {
       child: TextField(
         controller: _searchController,
         onChanged: (query) {
-          context.read<SearchBloc>().add(SearchEvent(query)); // ارسال رویداد با هر تغییر
+          context.read<SearchCubit>()..updateQuery(query); // ارسال رویداد با هر تغییر
         },
         decoration: InputDecoration(
           hintText: "جستجو بر اساس موضوع",
@@ -51,7 +50,7 @@ class _SearchState extends State<Search> {
             padding: EdgeInsets.all(11.w),
             child: GestureDetector(
               onTap: () {
-                context.read<SearchBloc>().add(SearchEvent(_searchController.text));
+                context.read<SearchCubit>().updateQuery(_searchController.text);
                 print("جستجو با آیکون انجام شد: ${_searchController.text}");
               },
               child: SvgPicture.asset(Assets.icons.searchIcon),
@@ -62,7 +61,7 @@ class _SearchState extends State<Search> {
             icon: Icon(Icons.clear, size: 20.w, color: AppColor.appBarColor),
             onPressed: () {
               _searchController.clear();
-              context.read<SearchBloc>().add(SearchEvent('')); // پاک کردن جستجو
+              context.read<SearchCubit>().updateQuery(''); // پاک کردن جستجو
             },
           )
               : null,
