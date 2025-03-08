@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:voie_writer/constant/app_color.dart';
 import '../../logic/cubit/OnboardingPage_bloc/Onboarding_cubit.dart';
 import '../../logic/state/onboarding/Onboarding_state.dart';
 import 'home_screen.dart';
@@ -42,7 +43,7 @@ class OnboardingScreen extends StatelessWidget {
       child: Scaffold(
         body: Stack(
           children: [
-            Container(color: Color(0xffD4F1F4)),
+            Container(color:AppColor.appBarTextColor),
             BlocBuilder<OnboardingCubit, OnboardingState>(
               builder: (context, state) {
                 return PageView.builder(
@@ -74,7 +75,7 @@ class OnboardingScreen extends StatelessWidget {
                         height: 12,
                         decoration: BoxDecoration(
                           color: state.pageIndex == index
-                              ? Color(0xff05445E)
+                              ? AppColor.appBarColor
                               : Color(0x7605445e),
                           shape: BoxShape.circle,
                         ),
