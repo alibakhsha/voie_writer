@@ -22,8 +22,26 @@ class $AssetsAnimationGen {
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/Group 3.svg
+  String get group3 => 'assets/icons/Group 3.svg';
+
+  /// File path: assets/icons/Icon.svg
+  String get icon => 'assets/icons/Icon.svg';
+
+  /// File path: assets/icons/Onboarding1.svg
+  String get onboarding1 => 'assets/icons/Onboarding1.svg';
+
+  /// File path: assets/icons/Onboarding2.svg
+  String get onboarding2 => 'assets/icons/Onboarding2.svg';
+
+  /// File path: assets/icons/Onboarding3.svg
+  String get onboarding3 => 'assets/icons/Onboarding3.svg';
+
   /// File path: assets/icons/download-02.svg
   String get download02 => 'assets/icons/download-02.svg';
+
+  /// File path: assets/icons/download.svg
+  String get download => 'assets/icons/download.svg';
 
   /// File path: assets/icons/iran.png
   AssetGenImage get iran => const AssetGenImage('assets/icons/iran.png');
@@ -37,6 +55,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/palette.svg
   String get palette => 'assets/icons/palette.svg';
 
+  /// File path: assets/icons/searchIcon.svg
+  String get searchIcon => 'assets/icons/searchIcon.svg';
+
   /// File path: assets/icons/share.svg
   String get share => 'assets/icons/share.svg';
 
@@ -45,11 +66,18 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<dynamic> get values => [
+    group3,
+    icon,
+    onboarding1,
+    onboarding2,
+    onboarding3,
     download02,
+    download,
     iran,
     mic,
     microphone,
     palette,
+    searchIcon,
     share,
     wifiOff,
   ];

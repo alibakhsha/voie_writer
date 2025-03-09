@@ -1,17 +1,18 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:voie_writer/constant/app_color.dart';
-import 'package:voie_writer/gen/assets.gen.dart';
-import 'package:voie_writer/presentation/screens/main_home_screen.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:voie_writer/presentation/screens/profile_screen.dart';
 import 'package:voie_writer/presentation/screens/recorder_voice_screen.dart';
-import 'package:voie_writer/presentation/widgets/app_bar.dart';
-import 'package:voie_writer/presentation/widgets/bottom_nav.dart';
 
+import '../../constant/app_color.dart';
+import '../../gen/assets.gen.dart';
 import '../../logic/cubit/home_page/home_cubit.dart';
 import '../../logic/cubit/voice/voice_cubit.dart';
+import '../widgets/app_bar.dart';
+import '../widgets/bottom_nav.dart';
+import 'main_home_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -26,14 +27,15 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeCubit = context.watch<HomeCubit>(); // مقدار `HomeCubit` را در متغیر ذخیره کن
+    final currentPageIndex = homeCubit.state;
+
     return SafeArea(
       child: Scaffold(
         extendBody: true,
         backgroundColor: AppColor.appBackgroundColor,
-        appBar: appBar(pageTitles[context.watch<HomeCubit>().state], context),
-        body: BlocBuilder<HomeCubit, int>(
-          builder: (context, state) => pages[state],
-        ),
+        appBar: appBar(pageTitles[currentPageIndex], context),
+        body: pages[currentPageIndex],
         bottomNavigationBar: const BottomNav(),
         floatingActionButton: _buildFloatingActionButton(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -50,6 +52,7 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           context.read<HomeCubit>().changePage(1);
           context.read<VoiceCubit>().pickAudioFile();
+          context.read<VoiceCubit>().uploadVoiceFile();
         },
         backgroundColor: AppColor.appBarColor,
         shape: const CircleBorder(),
