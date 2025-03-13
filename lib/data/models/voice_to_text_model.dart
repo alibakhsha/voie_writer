@@ -1,37 +1,37 @@
 class VoiceToTextModel {
   final int id;
   final int user;
-  final String audio;
+  final String? title; // nullable
   final String transcript;
-  final DateTime createdAt;
+  final String created_at;
 
   VoiceToTextModel({
     required this.id,
     required this.user,
-    required this.audio,
+    this.title, // required حذف شده چون nullable هست
     required this.transcript,
-    required this.createdAt,
+    required this.created_at,
   });
 
   // تبدیل JSON به مدل
   factory VoiceToTextModel.fromJson(Map<String, dynamic> json) {
     return VoiceToTextModel(
-      id: json['id'],
-      user: json['user'],
-      audio: json['audio'],
-      transcript: json['transcript'],
-      createdAt: DateTime.parse(json['created_at']),
+      id: json['id'] as int,           // مطمئن می‌شیم int هست
+      user: json['user'] as int,       // مطمئن می‌شیم int هست
+      title: json['title'] as String?, // می‌تونه null باشه
+      transcript: json['transcript'] as String,
+      created_at: json['created_at'] as String,
     );
   }
 
-  // تبدیل مدل به JSON (مثلاً برای ارسال درخواست POST)
+  // تبدیل مدل به JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'user': user,
-      'audio': audio,
+      'title': title, // ممکنه null باشه و مشکلی نیست
       'transcript': transcript,
-      'created_at': createdAt.toIso8601String(),
+      'created_at': created_at,
     };
   }
 }

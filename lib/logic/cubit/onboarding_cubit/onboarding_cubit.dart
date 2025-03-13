@@ -1,25 +1,38 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class OnboardingCubit extends Cubit<int> {
+import 'package:flutter/animation.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voie_writer/data/services/api_service.dart';
+import 'package:voie_writer/logic/device_registration.dart';
+
+import '../../onboarding_logic.dart';
+import '../../state/onboarding/Onboarding_state.dart';
+
+class OnboardingCubit extends Cubit<OnboardingState> {
+
+
   final PageController pageController;
+  // final OnboardingLogic _onboardingLogic;
   Timer? _timer;
 
-  OnboardingCubit(this.pageController) : super(0) {
+  OnboardingCubit(this.pageController, {String? deviceId})
+      // : _onboardingLogic = OnboardingLogic(pageController, deviceId: deviceId),
+      :  super(OnboardingState()) {
     _startAutoSlide();
+    _registerDevice(deviceId!);
   }
 
   void _startAutoSlide() {
-    _timer?.cancel(); // تایمر قبلی رو لغو کن
+    _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 2), (timer) {
-      int nextPage = state + 1;
-      print("Timer triggered: Moving to page $nextPage (current: $state)");
+      int nextPage = state.pageIndex + 1;
       if (nextPage >= 3) {
         timer.cancel();
-        emit(3); // به آخر خط برسه
+        emit(state.copyWith(pageIndex: 3));
       } else {
-        emit(nextPage);
+        emit(state.copyWith(pageIndex: nextPage));
         if (pageController.hasClients) {
           pageController.animateToPage(
             nextPage,
@@ -35,10 +48,47 @@ class OnboardingCubit extends Cubit<int> {
     _timer?.cancel();
   }
 
+  Future<void> _registerDevice(String deviceId) async {
+    // emit(state.copyWith(isRegistering: true)); // شروع ثبت‌نام
+    try {
+      ApiService _apiService = ApiService();
+
+
+
+      final result1 = await _apiService.check_user(deviceId);
+      if (result1){
+        var result2 = await _apiService.registerDeviceId(deviceId);
+      }
+      // var gg = result2?["refresh"];
+      // final result1 = await _apiService.createUserWithDeviceId(deviceId);
+      print('object');
+
+
+      // await _onboardingLogic.registerDevice();
+      // emit(state.copyWith(
+      //   isRegistering: false,
+      //   isRegistered: true,
+      //   registrationMessage: "دستگاه با موفقیت ثبت شد",
+      // ));
+    } catch (e) {
+      emit(state.copyWith(
+        isRegistering: false,
+        isRegistered: false,
+        registrationMessage: "خطا در ثبت دستگاه: $e",
+      ));
+    }
+  }
+
   @override
   Future<void> close() {
     _timer?.cancel();
-    pageController.dispose(); // کنترلر رو اینجا dispose می‌کنیم
+    pageController.dispose();
     return super.close();
+  }
+
+  @override
+  void onChange(Change<OnboardingState> change) {
+    super.onChange(change);
+    print(change);
   }
 }

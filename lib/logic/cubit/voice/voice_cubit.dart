@@ -40,11 +40,22 @@ class VoiceCubit extends Cubit<VoiceState> {
     if (result?.files.single.path != null) {
       selectedFilePath = result!.files.single.path!;
       fileName = result.files.single.name;
-      emit(VoiceState.selected);
-      await _extractDuration(selectedFilePath!);
+      emit(VoiceState.processing);
+      fileDuration = await _extractDuration(selectedFilePath!);
+
+
+
+
+
+      print(fileDuration);
+
+      uploadVoiceFile();
+
     } else {
       emit(VoiceState.idle);
     }
+
+
   }
 
   Future<bool> _requestPermission() async {
@@ -55,14 +66,17 @@ class VoiceCubit extends Cubit<VoiceState> {
     return status.isGranted;
   }
 
-  Future<void> _extractDuration(String filePath) async {
+  Future<Duration?> _extractDuration(String filePath) async {
     try {
       await _audioPlayer.setFilePath(filePath);
       fileDuration = _audioPlayer.duration;
-      emit(VoiceState.selected);
+
+
+      return fileDuration;
     } catch (_) {
       fileDuration = null;
-      emit(VoiceState.error);
+
+      return null;
     }
   }
 
@@ -73,12 +87,13 @@ class VoiceCubit extends Cubit<VoiceState> {
   }
 
   Future<void> uploadVoiceFile() async {
+    emit(VoiceState.processing);
     if (selectedFilePath == null) {
       print("No file selected!");
       return;
     }
 
-    emit(VoiceState.uploading);
+    // emit(VoiceState.uploading);
     try {
       var response = await _apiService.uploadVoiceToText(selectedFilePath!);
       if (response != null) {

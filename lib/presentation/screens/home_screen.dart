@@ -5,14 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:voie_writer/presentation/screens/profile_screen.dart';
 import 'package:voie_writer/presentation/screens/recorder_voice_screen.dart';
-
 import '../../constant/app_color.dart';
 import '../../gen/assets.gen.dart';
 import '../../logic/cubit/home_page/home_cubit.dart';
 import '../../logic/cubit/voice/voice_cubit.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/bottom_nav.dart';
-import 'main_home_screen.dart';
+import 'main_home.dart';
+
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           context.read<HomeCubit>().changePage(1);
           context.read<VoiceCubit>().pickAudioFile();
-          context.read<VoiceCubit>().uploadVoiceFile();
+          // context.read<VoiceCubit>().uploadVoiceFile();
         },
         backgroundColor: AppColor.appBarColor,
         shape: const CircleBorder(),

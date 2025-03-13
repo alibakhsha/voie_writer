@@ -1,6 +1,5 @@
 class MoveState {
   final double leftPosition;
-
   final int selectedIndex;
   final Map<int, double> positions;
 
