@@ -2,18 +2,37 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 
+import '../../../data/models/HighlightedText.dart';
+
 class ColorState {
-  final Color? selectedColor;
   final TextSelection? selectedText;
+  final Color? selectedColor;
   final bool isPaletteOpen;
+  final List<HighlightRange> highlights;
+  ColorState({
+    this.selectedText,
+    this.selectedColor,
+    this.isPaletteOpen = false,
+    this.highlights = const [],
+  });
 
-  ColorState({this.selectedColor, this.selectedText, this.isPaletteOpen = false});
+  ColorState.initial()
+      : selectedText = null,
+        selectedColor = null,
+        isPaletteOpen = false,
+        highlights = [];
 
-  ColorState copyWith({Color? selectedColor, TextSelection? selectedText, bool? isPaletteOpen}) {
+  ColorState copyWith({
+    TextSelection? selectedText,
+    Color? selectedColor,
+    bool? isPaletteOpen,
+    List<HighlightRange>? highlights,
+  }) {
     return ColorState(
-      selectedColor: selectedColor ?? this.selectedColor,
       selectedText: selectedText ?? this.selectedText,
+      selectedColor: selectedColor ?? this.selectedColor,
       isPaletteOpen: isPaletteOpen ?? this.isPaletteOpen,
+      highlights: highlights ?? this.highlights,
     );
   }
 }

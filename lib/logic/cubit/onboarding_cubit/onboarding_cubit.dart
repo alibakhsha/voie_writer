@@ -1,14 +1,18 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:voie_writer/data/services/api_service.dart';
 import 'package:voie_writer/logic/device_registration.dart';
 
 import '../../onboarding_logic.dart';
 import '../../state/onboarding/Onboarding_state.dart';
+import '../voice_text/voice_text_cubit.dart';
 
 class OnboardingCubit extends Cubit<OnboardingState> {
 
@@ -17,12 +21,26 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   // final OnboardingLogic _onboardingLogic;
   Timer? _timer;
 
-  OnboardingCubit(this.pageController, {String? deviceId})
-      // : _onboardingLogic = OnboardingLogic(pageController, deviceId: deviceId),
+  OnboardingCubit(this.pageController, {String? deviceId,})
       :  super(OnboardingState()) {
     _startAutoSlide();
     _registerDevice(deviceId!);
   }
+  Future<bool> _isOnline() async {
+    try {
+      final result = await InternetConnectionChecker().hasConnection;
+      if (result) {
+        print("اتصال به اینترنت تأیید شد");
+      } else {
+        print("دستگاه آفلاین است");
+      }
+      return result;
+    } catch (e) {
+      print("خطا در چک کردن اینترنت: $e");
+      return false;
+    }
+  }
+
 
   void _startAutoSlide() {
     _timer?.cancel();
@@ -49,35 +67,30 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   Future<void> _registerDevice(String deviceId) async {
-    // emit(state.copyWith(isRegistering: true)); // شروع ثبت‌نام
-    try {
-      ApiService _apiService = ApiService();
+ try{
+   final isOnline =await _isOnline();
+      if (isOnline == true){
+        try {
+          ApiService _apiService = ApiService();
+          final result1 = await _apiService.check_user(deviceId);
+          if (result1){
+            var result2 = await _apiService.registerDeviceId(deviceId);
+          }
+          print('object');
 
-
-
-      final result1 = await _apiService.check_user(deviceId);
-      if (result1){
-        var result2 = await _apiService.registerDeviceId(deviceId);
+        } catch (e) {
+          emit(state.copyWith(
+            isRegistering: false,
+            isRegistered: false,
+            registrationMessage: "خطا در ثبت دستگاه: $e",
+          ));
+        }
       }
-      // var gg = result2?["refresh"];
-      // final result1 = await _apiService.createUserWithDeviceId(deviceId);
-      print('object');
+  }catch(e){
+   print("offline");
 
-
-      // await _onboardingLogic.registerDevice();
-      // emit(state.copyWith(
-      //   isRegistering: false,
-      //   isRegistered: true,
-      //   registrationMessage: "دستگاه با موفقیت ثبت شد",
-      // ));
-    } catch (e) {
-      emit(state.copyWith(
-        isRegistering: false,
-        isRegistered: false,
-        registrationMessage: "خطا در ثبت دستگاه: $e",
-      ));
-    }
-  }
+ }
+ }
 
   @override
   Future<void> close() {

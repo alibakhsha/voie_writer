@@ -7,6 +7,7 @@ import 'package:voie_writer/data/database/database_helper.dart';
 import 'package:voie_writer/data/services/api_service.dart';
 import 'package:voie_writer/presentation/screens/home_screen.dart';
 import 'package:voie_writer/presentation/screens/onboarding_screen.dart';
+import 'package:voie_writer/routes/routs.dart';
 import 'logic/cubit/color_cubit/color_cubit.dart';
 import 'logic/cubit/drop_down/drop_down_cubit.dart';
 import 'logic/cubit/home_page/home_cubit.dart';
@@ -14,30 +15,27 @@ import 'logic/cubit/onboarding_cubit/onboarding_cubit.dart';
 import 'logic/cubit/voice/voice_cubit.dart';
 import 'logic/cubit/voice_text/voice_text_cubit.dart';
 import 'logic/cubit/search/search_cubit.dart';
+import 'logic/networkchecker.dart';
 
-final GoRouter router = GoRouter(
-  routes: [
-    GoRoute(
-      path: "/",
-      builder: (context, state) {
-        final String? deviceId = state.extra as String? ?? (context.findAncestorWidgetOfExactType<MyApp>() as MyApp?)?.deviceId;
-        return BlocProvider(
-          create: (context) => OnboardingCubit(PageController(), deviceId: deviceId),
-          child: OnboardingScreen(deviceId: deviceId),
-        );
-      },
-    ),
-    GoRoute(path: "/home", builder: (context, state) => HomeScreen()),
-  ],
-);
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   String? deviceId = await ApiService().getDeviceId();
-  // deviceId = "test2";
-  print("\x1B[31m deviceId1: $deviceId \x1B[0m");      // return throw Exception("Device ID is null");
+  final networkChecker = NetworkChecker();
 
-  // DatabaseHelper.instance.database;
+
+  DatabaseHelper.instance.database;
+  // await DatabaseHelper.instance.insertItem({
+  //   'user': 1,
+  //   'title': 'یادداشت صوتی ۱',
+  //   'transcript': 'این متن تست برای دیتابیسه...',
+  //   'created_at': "ddd",
+  // });
+  // List<Map<String, dynamic>> items = await DatabaseHelper.instance.getAllItems();
+
+
+
 
   runApp(
     MultiBlocProvider(
@@ -46,11 +44,11 @@ void main() async {
         BlocProvider<VoiceCubit>(create: (context) => VoiceCubit(ApiService())),
         BlocProvider<DropDownCubit>(create: (context) => DropDownCubit()),
         BlocProvider<ColorCubit>(create: (context) => ColorCubit()),
-        BlocProvider(create: (context) => VoiceTextCubit()),
+        BlocProvider<VoiceTextCubit>(create: (context) => VoiceTextCubit(networkChecker)),
         BlocProvider<SearchCubit>(create: (context) => SearchCubit()),
-        BlocProvider<MoveCubit>(
-          create: (context) => MoveCubit(),
-        ),
+        BlocProvider<MoveCubit>(create: (context) => MoveCubit()),
+        BlocProvider<VoiceTextCubitOffline>(create: (context) => VoiceTextCubitOffline(networkChecker,BlocProvider.of<VoiceTextCubit>(context))),
+
       ],
       child: MyApp(deviceId: deviceId),
     ),
@@ -67,7 +65,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(393, 852),
       builder: (context, child) => MaterialApp.router(
-        routerConfig: router,
+        routerConfig: initGoRouter(),
         debugShowCheckedModeBanner: false,
         locale: const Locale('fa'),
       ),

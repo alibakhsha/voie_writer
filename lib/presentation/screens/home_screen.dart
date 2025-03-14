@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFloatingActionButton(BuildContext context) {
+  Widget _buildFloatingActionButton(BuildContext context)  {
     return SizedBox(
       width: 72.w,
       height: 72.h,
@@ -52,7 +52,6 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           context.read<HomeCubit>().changePage(1);
           context.read<VoiceCubit>().pickAudioFile();
-          // context.read<VoiceCubit>().uploadVoiceFile();
         },
         backgroundColor: AppColor.appBarColor,
         shape: const CircleBorder(),

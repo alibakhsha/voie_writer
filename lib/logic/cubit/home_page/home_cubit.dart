@@ -3,7 +3,7 @@ import '../../state/voiceTextsList/Move_text.dart';
 
 
 class HomeCubit extends Cubit<int> {
-  HomeCubit() : super(1);
+  HomeCubit() : super(2);
 
   void changePage(int index) => emit(index.clamp(0, 2));
 }

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../constant/app_color.dart';
 import '../../logic/cubit/onboarding_cubit/onboarding_cubit.dart';
 import '../../logic/state/onboarding/Onboarding_state.dart';
+import '../../routes/rout_name.dart';
 
 class OnboardingScreen extends StatelessWidget {
   final String? deviceId;
@@ -26,7 +27,7 @@ class OnboardingScreen extends StatelessWidget {
       listener: (context, state) {
         if (state.pageIndex == 3) {
           context.read<OnboardingCubit>().stopAutoSlide();
-          context.go('/home');
+          context.goNamed(RouteName.home);
         }
       },
       child: Scaffold(

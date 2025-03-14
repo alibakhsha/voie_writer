@@ -169,12 +169,24 @@ class ApiService {
     try {
       Map<String, String> headers = await getAuthHeaders();
       DateTime now = DateTime.now();
-      int timestampMillis = now.millisecondsSinceEpoch;
+      final timestampMillis = now.millisecondsSinceEpoch;
+      final unixTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       Response response = await _dio.get(
         '/voice-to-text/',
         options: Options(headers: headers),
-        data: {'Timestamp': 0},
+        data: {'timestamp': timestampMillis},
       );
+
+      // Response response = await _dio.get(
+      //   '/voice-to-text/?user_id=user2&timestamp=1741962222',
+      //   options: Options(headers: headers),
+      // );
+      //
+      // Response response = await _dio.get(
+      //   '/user-posts/?user_id=TE1A.240213.009&timestamp=1741961283',
+      //   options: Options(headers: headers),
+      // );
+
 
       if (response.statusCode == 200) {
         if (response.data is List) {
@@ -194,19 +206,16 @@ class ApiService {
   }
 
   /// ارسال فایل صوتی و دریافت متن تبدیل‌شده
-  Future<VoiceToTextModel?> uploadVoiceToText(String audioPath) async {
+  Future<VoiceToTextModel?> uploadVoiceToText(String audioPath, String? title) async {
     try {
       final headers = await getAuthHeaders();
-
-
-
 
       FormData formData = FormData.fromMap({
         'audio': await MultipartFile.fromFile(
           audioPath!,
           filename: audioPath!.split('/').last,
         ),
-        'title': 'test',
+        'title': title,
       });
 
       Response response = await _dio.post(

@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:just_audio/just_audio.dart';
+import '../../../data/models/HighlightedText.dart';
 import '../../../data/services/api_service.dart';
 import '../../../data/models/voice_to_text_model.dart';
 
@@ -28,10 +31,10 @@ class VoiceCubit extends Cubit<VoiceState> {
 
   VoiceCubit(this._apiService) : super(VoiceState.idle);
 
-  Future<void> pickAudioFile() async {
+  Future<String?> pickAudioFile() async {
     if (!await _requestPermission()) {
       emit(VoiceState.error);
-      return;
+      return null;
     }
 
     emit(VoiceState.selecting);
@@ -39,17 +42,18 @@ class VoiceCubit extends Cubit<VoiceState> {
 
     if (result?.files.single.path != null) {
       selectedFilePath = result!.files.single.path!;
+
       fileName = result.files.single.name;
-      emit(VoiceState.processing);
       fileDuration = await _extractDuration(selectedFilePath!);
 
 
 
+      emit(VoiceState.selected);
 
 
       print(fileDuration);
 
-      uploadVoiceFile();
+      // uploadVoiceFile();
 
     } else {
       emit(VoiceState.idle);
@@ -86,7 +90,7 @@ class VoiceCubit extends Cubit<VoiceState> {
     return androidInfo.version.sdkInt;
   }
 
-  Future<void> uploadVoiceFile() async {
+  Future<void> uploadVoiceFile({String? title}) async {
     emit(VoiceState.processing);
     if (selectedFilePath == null) {
       print("No file selected!");
@@ -95,7 +99,7 @@ class VoiceCubit extends Cubit<VoiceState> {
 
     // emit(VoiceState.uploading);
     try {
-      var response = await _apiService.uploadVoiceToText(selectedFilePath!);
+      var response = await _apiService.uploadVoiceToText(selectedFilePath!,title);
       if (response != null) {
         convertedText = response;
         emit(VoiceState.conversionSuccess);
@@ -108,4 +112,19 @@ class VoiceCubit extends Cubit<VoiceState> {
       print("Upload Error: $e");
     }
   }
+
+
+  Future<void> saveToFile(HighlightedText highlightedText) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/highlighted_text.json');
+    final jsonString = jsonEncode(highlightedText.toJson());
+    await file.writeAsString(jsonString);
+    print('فایل با موفقیت ذخیره شد: ${file.path}');
+  }
+
+
+
+
+
+
 }

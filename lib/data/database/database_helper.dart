@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -41,9 +43,41 @@ class DatabaseHelper {
     );
   }
 
+  // متد برای درج داده
+  Future<int> insertItem(Map<String, dynamic> row) async {
+    final db = await database;
+    return await db.insert('items', row);
+  }
+  Future<int> deleteItem(int id) async {
+    final db = await database;
+    return await db.delete('items', where: 'id = ?', whereArgs: [id]);
+  }
+
+
+  // متد برای خوندن همه داده‌ها
+  Future<List<Map<String, dynamic>>> getAllItems() async {
+    final db = await database;
+    return await db.query('items');
+  }
+
+
+
+
+
 
   Future<void> close() async {
     final db = await database;
     db.close();
   }
+
+
+  //
+  // static Future<bool> checkDatabaseExists() async {
+  //   final documentsDirectory = await getApplicationDocumentsDirectory();
+  //   String path = p.join(documentsDirectory.path, 'VoiceWriter_database.db');
+  //   return File(path).exists();
+  // }
+
+
+
 }

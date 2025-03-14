@@ -1,54 +1,22 @@
 import 'dart:io';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voie_writer/data/models/VoiceToText/get_list_voice.dart';
+import 'package:voie_writer/data/models/voice_to_text_model.dart';
+import 'package:voie_writer/logic/cubit/voice_text/voice_text_cubit.dart';
+
+import '../../../data/database/database_helper.dart';
 import '../../../data/services/api_service.dart';
 import '../../device_registration.dart';
+import '../../networkchecker.dart';
 import '../../state/voiceTextsList/textList_state.dart';
 
 class VoiceTextCubit extends Cubit<VoiceTextState> {
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final ApiService _apiService;
+  final NetworkChecker _NetworkChecker;
+  VoiceTextCubit(this._NetworkChecker) : _apiService = ApiService(), super(VoiceTextInitial());
 
-  VoiceTextCubit() : _apiService = ApiService(), super(VoiceTextInitial());
-
-
-
-  Future<void> initialize(String deviceId) async {
-    emit(VoiceTextLoading());
-    final deviceReg = DeviceRegistration(_apiService);
-    try {
-      final token = await deviceReg.authenticateDevice(deviceId);
-      if (token != null) {
-        print("توکن ست شد - Access: ${token.access}");
-        await fetchVoiceList();
-      } else {
-        emit(VoiceTextError('احراز هویت ناموفق'));
-      }
-    } catch (e) {
-      emit(VoiceTextError('خطا در مقداردهی اولیه: $e'));
-    }
-  }
-
-  // تابع چک کردن اتصال اینترنت
-  Future<bool> _isOnline() async {
-    try {
-      var connectivityResult = await Connectivity().checkConnectivity();
-      if (connectivityResult == ConnectivityResult.none) {
-        print("etesla be server qate");
-        return false;
-      }
-      final client = HttpClient();
-      final request = await client.getUrl(Uri.parse('https://www.google.com'));
-      await request.close().timeout(Duration(seconds: 2));
-      print("teste ersal moafaq amize");
-      return true;
-    } catch (e) {
-      print("khata to check kardane internet: $e");
-      return false;
-    }
-  }
 
   /// دریافت لیست فایل‌های صوتی تبدیل‌شده از سرور
   Future<void> fetchVoiceList() async {
@@ -79,10 +47,10 @@ class VoiceTextCubit extends Cubit<VoiceTextState> {
       emit(VoiceTextError('خطا در گرفتن داده‌ها: $e'));
     }
   }
-  Future<void> recordAndSendVoice(String audioPath) async {
+  Future<void> recordAndSendVoice(String audioPath,{String? title}) async {
     emit(VoiceTextLoading());
     try {
-      final result = await _apiService.uploadVoiceToText(audioPath);
+      final result = await _apiService.uploadVoiceToText(audioPath,title);
       if (result != null) {
         final currentState = state;
         if (currentState is VoiceTextLoaded) {
@@ -97,28 +65,25 @@ class VoiceTextCubit extends Cubit<VoiceTextState> {
       emit(VoiceTextError('خطا: $e'));
     }
   }
-  /// ارسال فایل صوتی به سرور و افزودن به لیست
-  // Future<void> uploadVoiceText(String filePath) async {
-  //   final response = await _apiService.uploadVoiceToText(filePath);
-  //   if (response != null) {
-  //     // تبدیل response از نوع VoiceToText به Map<String, dynamic>
-  //     List<Map<String, dynamic>> updatedList = List.from(state);
-  //     updatedList.add(response.toJson()); // اضافه کردن آیتم جدید به لیست
-  //     emit(updatedList);
-  //   } else {
-  //     print("خطا در آپلود فایل صوتی");
-  //   }
-  // }
 
   /// حذف یک فایل صوتی هم از سرور و هم از لیست
   Future<void> deleteVoiceText(String id) async {
     emit(VoiceTextLoading());
 
     try {
-      if (await _isOnline()) {
+      if (await _NetworkChecker.isOnline()) {
         final success = await _apiService.deleteVoiceText(id);
         if (success) {
-          await fetchVoiceList();
+
+          final itemId = int.parse(id);
+          print('در حال حذف id: $itemId');
+          final result = await _dbHelper.deleteItem(itemId);
+          if (result > 0) {
+            await fetchVoiceList();
+            print("حذف موفق‌آمیز بود");
+          } else {
+            emit(VoiceTextError("حذف ناموفق بود: آیتم پیدا نشد"));
+          }
           print("hazf moafaq amiz bod");
         } else {
           emit(VoiceTextError("حذف ناموفق بود: سرور پاسخ معتبر نداد"));
@@ -131,3 +96,91 @@ class VoiceTextCubit extends Cubit<VoiceTextState> {
     }
   }
 }
+
+
+
+class VoiceTextCubitOffline extends Cubit<VoiceTextState>{
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+
+  VoiceTextCubitOffline(this._NetworkChecker,this._voiceTextCubit) : super(VoiceTextInitial());
+  final NetworkChecker _NetworkChecker;
+  final VoiceTextCubit _voiceTextCubit;
+
+
+
+   Future<void> fetchVoiceList() async{
+
+    emit(VoiceTextLoading());
+    try{
+      if (await _NetworkChecker.isOnline()){
+        print("user is online");
+        await _voiceTextCubit.fetchVoiceList();
+        final cubitState = _voiceTextCubit.state;
+        if (cubitState is VoiceTextLoaded) {
+
+          final localVoices = await _dbHelper.getAllItems();
+          final localVoiceModels = localVoices.map((map) => VoiceToTextModel.fromJson(map)).toList();
+
+
+          for (var voice in cubitState.voices) {
+
+            if (!localVoiceModels.any((local) => local.id == voice.id)) {
+              await _dbHelper.insertItem(voice.toJson());
+            }
+
+          }
+
+          final updatedVoices = await _dbHelper.getAllItems();
+          final updatedVoiceModels = updatedVoices.map((map) => VoiceToTextModel.fromJson(map)).toList();
+          emit(VoiceTextLoaded(updatedVoiceModels));
+        } else if (cubitState is VoiceTextError) {
+          emit(VoiceTextError(cubitState.message));
+        }
+
+
+
+
+
+
+
+
+      }else {
+       print("object");
+
+       final voices =await _dbHelper.getAllItems();
+       final voiceModels = voices.map((map) => VoiceToTextModel.fromJson(map)).toList();
+       if ( voiceModels.isNotEmpty){
+         emit(VoiceTextLoaded(voiceModels));
+       }else {
+         emit(VoiceTextLoaded([]));
+       }
+      }
+
+
+
+    }catch (e){
+      emit(VoiceTextError('خطا در گرفتن داده‌ها از دیتابیس: $e'));
+
+    }
+
+  }
+  Future<void> deleteVoiceText(String id) async{
+    emit(VoiceTextLoading());
+    try{
+
+      final itemId = int.parse(id);
+      print('در حال حذف id: $itemId');
+      final result = await _dbHelper.deleteItem(itemId);
+      if (result > 0) {
+        await fetchVoiceList();
+        print("حذف موفق‌آمیز بود");
+      } else {
+        emit(VoiceTextError("حذف ناموفق بود: آیتم پیدا نشد"));
+      }
+    }catch(e){
+      emit(VoiceTextError("خطا در حذف: $e"));
+    }
+  }
+
+}
+

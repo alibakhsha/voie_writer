@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:voie_writer/constant/app_color.dart';
-import 'package:voie_writer/gen/assets.gen.dart';
-import 'package:voie_writer/presentation/widgets/app_bar.dart';
-import 'package:voie_writer/presentation/widgets/bottom_nav.dart';
-import '../../data/models/VoiceToText/get_list_voice.dart';
 import '../../data/models/voice_to_text_model.dart';
 import '../../logic/cubit/search/search_cubit.dart';
 import '../../logic/cubit/voice_text/voice_text_cubit.dart';
@@ -26,7 +21,7 @@ class _HomeScreenState extends State<MainHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<VoiceTextCubit>().fetchVoiceList();
+    context.read<VoiceTextCubitOffline>().fetchVoiceList();
   }
 
 
@@ -48,7 +43,7 @@ class _HomeScreenState extends State<MainHomeScreen> {
 
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: BlocBuilder<VoiceTextCubit, VoiceTextState>(
+          child: BlocBuilder<VoiceTextCubitOffline, VoiceTextState>(
             builder: (context, voiceState) {
               if (voiceState is VoiceTextLoading) {
                 return Center(child: CircularProgressIndicator());
@@ -61,7 +56,7 @@ class _HomeScreenState extends State<MainHomeScreen> {
                 }
                 return BlocBuilder<SearchCubit, SearchState>(
                   builder: (context, searchState) {
-                    final voiceTextState = context.watch<VoiceTextCubit>().state;
+                    final voiceTextState = context.watch<VoiceTextCubitOffline>().state;
                     List<VoiceToTextModel> voices = [];
 
                     if (voiceTextState is VoiceTextLoaded) {
