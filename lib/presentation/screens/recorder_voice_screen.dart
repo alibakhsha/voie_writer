@@ -18,7 +18,6 @@ class RecorderVoiceScreen extends StatelessWidget {
 
   void _showSaveDialog(BuildContext context)  {
     _saveHighlightedText(context);
-    print("هایلایت‌ها با موفقیت ذخیره شدند");
     context.read<HomeCubit>().changePage(3);
   }
 
@@ -179,8 +178,6 @@ class RecorderVoiceScreen extends StatelessWidget {
     final title = await showSaveDialog(context);
     if (title != null) {
       await context.read<VoiceCubit>().uploadVoiceFile(title: title);
-    } else {
-      print("کاربر title وارد نکرد");
     }
   }
 
@@ -228,7 +225,6 @@ class RecorderVoiceScreen extends StatelessWidget {
   }
 
   Widget _loadingScreen(BuildContext context) {
-    print("Rendering loading screen");
     final voiceCubit = context.read<VoiceCubit>();
     return Column(
       children: [

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:voie_writer/constant/app_color.dart';
 
 import '../../logic/cubit/home_page/home_cubit.dart';
+import '../../logic/cubit/voice_text/voice_text_cubit.dart';
 
 class BottomNav extends StatelessWidget {
   const BottomNav({super.key});
@@ -37,7 +38,11 @@ class BottomNav extends StatelessWidget {
                 color: AppColor.appBarTextColor,
               ),
             ),
-            onPressed: () => context.read<HomeCubit>().changePage(2),
+            onPressed: () {
+
+                  context.read<HomeCubit>().changePage(2);
+         context.read<VoiceTextCubit>().fetchVoiceList();
+            },
           ),
         ],
       ),

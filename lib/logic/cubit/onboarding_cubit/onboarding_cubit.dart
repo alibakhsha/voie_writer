@@ -15,37 +15,31 @@ import '../../state/onboarding/Onboarding_state.dart';
 import '../voice_text/voice_text_cubit.dart';
 
 class OnboardingCubit extends Cubit<OnboardingState> {
-
-
   final PageController pageController;
+
   // final OnboardingLogic _onboardingLogic;
   Timer? _timer;
 
-  OnboardingCubit(this.pageController, {String? deviceId,})
-      :  super(OnboardingState()) {
+  OnboardingCubit(this.pageController, {String? deviceId})
+    : super(OnboardingState()) {
     _startAutoSlide();
     _registerDevice(deviceId!);
   }
+
   Future<bool> _isOnline() async {
     try {
       final result = await InternetConnectionChecker().hasConnection;
-      if (result) {
-        print("اتصال به اینترنت تأیید شد");
-      } else {
-        print("دستگاه آفلاین است");
-      }
       return result;
     } catch (e) {
-      print("خطا در چک کردن اینترنت: $e");
       return false;
     }
   }
-
 
   void _startAutoSlide() {
     _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 2), (timer) {
       int nextPage = state.pageIndex + 1;
+      print("\x1B[31m $nextPage \x1B[0m");
       if (nextPage >= 3) {
         timer.cancel();
         emit(state.copyWith(pageIndex: 3));
@@ -67,30 +61,27 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   Future<void> _registerDevice(String deviceId) async {
- try{
-   final isOnline =await _isOnline();
-      if (isOnline == true){
+    try {
+      final isOnline = await _isOnline();
+      if (isOnline == true) {
         try {
           ApiService _apiService = ApiService();
-          final result1 = await _apiService.check_user(deviceId);
-          if (result1){
-            var result2 = await _apiService.registerDeviceId(deviceId);
-          }
-          print('object');
 
+          await _apiService.check_user(deviceId);
+          emit(state.copyWith(isRegistered: true));
         } catch (e) {
-          emit(state.copyWith(
-            isRegistering: false,
-            isRegistered: false,
-            registrationMessage: "خطا در ثبت دستگاه: $e",
-          ));
+          emit(
+            state.copyWith(
+              isRegistering: false,
+              registrationMessage: "خطا در ثبت دستگاه: $e",
+            ),
+          );
         }
       }
-  }catch(e){
-   print("offline");
-
- }
- }
+    } catch (e) {
+      print("offline");
+    }
+  }
 
   @override
   Future<void> close() {
@@ -102,6 +93,5 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   @override
   void onChange(Change<OnboardingState> change) {
     super.onChange(change);
-    print(change);
   }
 }

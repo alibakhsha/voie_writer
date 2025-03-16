@@ -46,15 +46,7 @@ class VoiceCubit extends Cubit<VoiceState> {
       fileName = result.files.single.name;
       fileDuration = await _extractDuration(selectedFilePath!);
 
-
-
       emit(VoiceState.selected);
-
-
-      print(fileDuration);
-
-      // uploadVoiceFile();
-
     } else {
       emit(VoiceState.idle);
     }

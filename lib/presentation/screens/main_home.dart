@@ -21,7 +21,7 @@ class _HomeScreenState extends State<MainHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<VoiceTextCubitOffline>().fetchVoiceList();
+
   }
 
 
@@ -43,7 +43,7 @@ class _HomeScreenState extends State<MainHomeScreen> {
 
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: BlocBuilder<VoiceTextCubitOffline, VoiceTextState>(
+          child: BlocBuilder<VoiceTextCubit, VoiceTextState>(
             builder: (context, voiceState) {
               if (voiceState is VoiceTextLoading) {
                 return Center(child: CircularProgressIndicator());
@@ -56,7 +56,7 @@ class _HomeScreenState extends State<MainHomeScreen> {
                 }
                 return BlocBuilder<SearchCubit, SearchState>(
                   builder: (context, searchState) {
-                    final voiceTextState = context.watch<VoiceTextCubitOffline>().state;
+                    final voiceTextState = context.watch<VoiceTextCubit>().state;
                     List<VoiceToTextModel> voices = [];
 
                     if (voiceTextState is VoiceTextLoaded) {

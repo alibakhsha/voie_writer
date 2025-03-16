@@ -51,7 +51,6 @@ class _SearchState extends State<Search> {
             child: GestureDetector(
               onTap: () {
                 context.read<SearchCubit>().updateQuery(_searchController.text);
-                print("search ba icon anjam shod: ${_searchController.text}");
               },
               child: SvgPicture.asset(Assets.icons.searchIcon),
             ),

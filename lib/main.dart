@@ -47,7 +47,7 @@ void main() async {
         BlocProvider<VoiceTextCubit>(create: (context) => VoiceTextCubit(networkChecker)),
         BlocProvider<SearchCubit>(create: (context) => SearchCubit()),
         BlocProvider<MoveCubit>(create: (context) => MoveCubit()),
-        BlocProvider<VoiceTextCubitOffline>(create: (context) => VoiceTextCubitOffline(networkChecker,BlocProvider.of<VoiceTextCubit>(context))),
+        // BlocProvider<VoiceTextCubitOffline>(create: (context) => VoiceTextCubitOffline(networkChecker,BlocProvider.of<VoiceTextCubit>(context))),
 
       ],
       child: MyApp(deviceId: deviceId),

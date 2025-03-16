@@ -12,7 +12,6 @@ class OnboardingScreen extends StatelessWidget {
   final String? deviceId;
 
   OnboardingScreen({this.deviceId}) {
-    print("OnboardingScreen initialized with deviceId: $deviceId");
   }
 
   final List<Map<String, String>> _onboardingData = [
@@ -25,7 +24,7 @@ class OnboardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<OnboardingCubit, OnboardingState>(
       listener: (context, state) {
-        if (state.pageIndex == 3) {
+        if (state.pageIndex == 3 && state.isRegistered) {
           context.read<OnboardingCubit>().stopAutoSlide();
           context.goNamed(RouteName.home);
         }

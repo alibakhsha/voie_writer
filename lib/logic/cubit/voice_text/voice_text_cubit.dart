@@ -15,42 +15,51 @@ class VoiceTextCubit extends Cubit<VoiceTextState> {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final ApiService _apiService;
   final NetworkChecker _NetworkChecker;
-  VoiceTextCubit(this._NetworkChecker) : _apiService = ApiService(), super(VoiceTextInitial());
 
+  VoiceTextCubit(this._NetworkChecker)
+    : _apiService = ApiService(),
+      super(VoiceTextInitial());
 
   /// دریافت لیست فایل‌های صوتی تبدیل‌شده از سرور
   Future<void> fetchVoiceList() async {
     emit(VoiceTextLoading());
-    print("شروع fetchVoiceTexts");
-
     try {
-      print("dar hale gereftane dade az server");
-      final prefs = await SharedPreferences.getInstance();
-      final accessToken = prefs.getString('access_token');
-      print("توکن: $accessToken");
+      if (await _NetworkChecker.isOnline()) {
 
-      if (accessToken == null) {
-        print("token peyda nashod");
-        emit(VoiceTextError('لطفاً ابتدا دستگاه را احراز هویت کنید'));
-        return;
-      }
+        List<VoiceToTextModel> voices = await _apiService.fetchVoiceToText();
+                  for (var voice in voices) {
+try {
 
-      final voices = await _apiService.fetchVoiceToText();
-      print("data az server: $voices");
-      if (voices != null) {
-        emit(VoiceTextLoaded(voices));
-      } else {
-        emit(VoiceTextLoaded([]));
+  await _dbHelper.insertItem(voice.toJson());
+}catch(e){
+
+}
+
+          }
+        // if (voices != null) {
+        //   emit(VoiceTextLoaded(voices));
+        // } else {
+        //   emit(VoiceTextLoaded([]));
+        // }
       }
     } catch (e) {
-      print("khata dar fetchVoiceTexts: $e");
+      // print("khata dar fetchVoiceTexts: $e");
       emit(VoiceTextError('خطا در گرفتن داده‌ها: $e'));
     }
+    final localVoices = await _dbHelper.getAllItems();
+    final voiceModels =
+    localVoices.map((map) => VoiceToTextModel.fromJson(map)).toList();
+    if (voiceModels.isNotEmpty) {
+      emit(VoiceTextLoaded(voiceModels));
+    } else {
+      emit(VoiceTextLoaded([]));
+    }
   }
-  Future<void> recordAndSendVoice(String audioPath,{String? title}) async {
+
+  Future<void> recordAndSendVoice(String audioPath, {String? title}) async {
     emit(VoiceTextLoading());
     try {
-      final result = await _apiService.uploadVoiceToText(audioPath,title);
+      final result = await _apiService.uploadVoiceToText(audioPath, title);
       if (result != null) {
         final currentState = state;
         if (currentState is VoiceTextLoaded) {
@@ -74,7 +83,6 @@ class VoiceTextCubit extends Cubit<VoiceTextState> {
       if (await _NetworkChecker.isOnline()) {
         final success = await _apiService.deleteVoiceText(id);
         if (success) {
-
           final itemId = int.parse(id);
           print('در حال حذف id: $itemId');
           final result = await _dbHelper.deleteItem(itemId);
@@ -98,89 +106,71 @@ class VoiceTextCubit extends Cubit<VoiceTextState> {
 }
 
 
-
-class VoiceTextCubitOffline extends Cubit<VoiceTextState>{
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
-
-  VoiceTextCubitOffline(this._NetworkChecker,this._voiceTextCubit) : super(VoiceTextInitial());
-  final NetworkChecker _NetworkChecker;
-  final VoiceTextCubit _voiceTextCubit;
-
-
-
-   Future<void> fetchVoiceList() async{
-
-    emit(VoiceTextLoading());
-    try{
-      if (await _NetworkChecker.isOnline()){
-        print("user is online");
-        await _voiceTextCubit.fetchVoiceList();
-        final cubitState = _voiceTextCubit.state;
-        if (cubitState is VoiceTextLoaded) {
-
-          final localVoices = await _dbHelper.getAllItems();
-          final localVoiceModels = localVoices.map((map) => VoiceToTextModel.fromJson(map)).toList();
-
-
-          for (var voice in cubitState.voices) {
-
-            if (!localVoiceModels.any((local) => local.id == voice.id)) {
-              await _dbHelper.insertItem(voice.toJson());
-            }
-
-          }
-
-          final updatedVoices = await _dbHelper.getAllItems();
-          final updatedVoiceModels = updatedVoices.map((map) => VoiceToTextModel.fromJson(map)).toList();
-          emit(VoiceTextLoaded(updatedVoiceModels));
-        } else if (cubitState is VoiceTextError) {
-          emit(VoiceTextError(cubitState.message));
-        }
-
-
-
-
-
-
-
-
-      }else {
-       print("object");
-
-       final voices =await _dbHelper.getAllItems();
-       final voiceModels = voices.map((map) => VoiceToTextModel.fromJson(map)).toList();
-       if ( voiceModels.isNotEmpty){
-         emit(VoiceTextLoaded(voiceModels));
-       }else {
-         emit(VoiceTextLoaded([]));
-       }
-      }
-
-
-
-    }catch (e){
-      emit(VoiceTextError('خطا در گرفتن داده‌ها از دیتابیس: $e'));
-
-    }
-
-  }
-  Future<void> deleteVoiceText(String id) async{
-    emit(VoiceTextLoading());
-    try{
-
-      final itemId = int.parse(id);
-      print('در حال حذف id: $itemId');
-      final result = await _dbHelper.deleteItem(itemId);
-      if (result > 0) {
-        await fetchVoiceList();
-        print("حذف موفق‌آمیز بود");
-      } else {
-        emit(VoiceTextError("حذف ناموفق بود: آیتم پیدا نشد"));
-      }
-    }catch(e){
-      emit(VoiceTextError("خطا در حذف: $e"));
-    }
-  }
-
-}
-
+// class VoiceTextCubitOffline extends Cubit<VoiceTextState> {
+//   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+//
+//   VoiceTextCubitOffline(this._NetworkChecker, this._voiceTextCubit)
+//     : super(VoiceTextInitial());
+//   final NetworkChecker _NetworkChecker;
+//   final VoiceTextCubit _voiceTextCubit;
+//
+//   Future<void> fetchVoiceList() async {
+//     emit(VoiceTextLoading());
+//     try {
+//       final localVoices = await _dbHelper.getAllItems();
+//       final voiceModels =
+//           localVoices.map((map) => VoiceToTextModel.fromJson(map)).toList();
+//
+//       if (await _NetworkChecker.isOnline()) {
+//         print("user is online");
+//         await _voiceTextCubit.fetchVoiceList();
+//         final cubitState = _voiceTextCubit.state;
+//         if (cubitState is VoiceTextLoaded) {
+//           // final localVoices = await _dbHelper.getAllItems();
+//           // final localVoiceModels = localVoices.map((map) => VoiceToTextModel.fromJson(map)).toList();
+//
+//           // for (var voice in cubitState.voices) {
+//           //
+//           //   if (!localVoiceModels.any((local) => local.id == voice.id)) {
+//           //     await _dbHelper.insertItem(voice.toJson());
+//           //   }
+//           //
+//           // }
+//
+//           // final updatedVoices = await _dbHelper.getAllItems();
+//           // final updatedVoiceModels = updatedVoices.map((map) => VoiceToTextModel.fromJson(map)).toList();
+//           // emit(VoiceTextLoaded(updatedVoiceModels));
+//         } else if (cubitState is VoiceTextError) {
+//           emit(VoiceTextError(cubitState.message));
+//         }
+//       } else {
+//         // final voices =await _dbHelper.getAllItems();
+//         // final voiceModels = voices.map((map) => VoiceToTextModel.fromJson(map)).toList();
+//         if (voiceModels.isNotEmpty) {
+//           emit(VoiceTextLoaded(voiceModels));
+//         } else {
+//           emit(VoiceTextLoaded([]));
+//         }
+//       }
+//     } catch (e) {
+//       emit(VoiceTextError('خطا در گرفتن داده‌ها از دیتابیس: $e'));
+//     }
+//   }
+//
+//   Future<void> deleteVoiceText(String id) async {
+//     emit(VoiceTextLoading());
+//     try {
+//       final itemId = int.parse(id);
+//       print('در حال حذف id: $itemId');
+//       final result = await _dbHelper.deleteItem(itemId);
+//       if (result > 0) {
+//         await fetchVoiceList();
+//         print("حذف موفق‌آمیز بود");
+//       } else {
+//         emit(VoiceTextError("حذف ناموفق بود: آیتم پیدا نشد"));
+//       }
+//     } catch (e) {
+//       emit(VoiceTextError("خطا در حذف: $e"));
+//     }
+//   }
+// }
